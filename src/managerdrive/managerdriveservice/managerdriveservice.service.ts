@@ -14,19 +14,22 @@ type PartialDriveFile = {
     incompleteSearch: boolean;
     files: PartialDriveFile[];
   };
-
+interface IArgsClientGoogleDrive {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+  refreshToken: string;
+    
+} 
 @Injectable()
 export class ManagerdriveserviceService {
-    private driveClient;
+  private driveClient:any;
+  
 
-  public constructor(clientId: string, clientSecret: string, redirectUri: string, refreshToken: string) {
-    this.driveClient = this.createDriveClient(clientId, clientSecret, redirectUri, refreshToken);
-  }
+  createDriveClient(clientGoogleDrive:IArgsClientGoogleDrive) {
+    const client = new google.auth.OAuth2(clientGoogleDrive.clientId, clientGoogleDrive.clientSecret, clientGoogleDrive.redirectUri);
 
-  createDriveClient(clientId: string, clientSecret: string, redirectUri: string, refreshToken: string) {
-    const client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
-
-    client.setCredentials({ refresh_token: refreshToken });
+    client.setCredentials({ refresh_token: clientGoogleDrive.refreshToken });
 
     return google.drive({
       version: 'v3',
