@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ManagerdriveserviceService } from './managerdriveservice/managerdriveservice.service';
+import { ManagerGoogleDriveService } from './managerdriveservice/managerdriveservice.service';
 
 @Module({
-  providers: [ManagerdriveserviceService]
+  providers: [
+    ManagerGoogleDriveService
+  ],
+  exports:[ManagerGoogleDriveService]
 })
 export class ManagerdriveModule {}

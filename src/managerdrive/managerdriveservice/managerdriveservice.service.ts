@@ -22,7 +22,7 @@ interface IArgsClientGoogleDrive {
     
 } 
 @Injectable()
-export class ManagerdriveserviceService {
+export class ManagerGoogleDriveService {
   private driveClient:any;
   
 
