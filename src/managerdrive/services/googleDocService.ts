@@ -46,7 +46,9 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
 
     }
 
-    public async insertaImagenCuerpo(webViewLink:string){}
+    public async insertaImagenCuerpo(webViewLink:string){
+      
+    }
     /**
      *  const finds = ['<DATE>', '<NUMBER>', '<EMPLOYER>', '<EMPLOYER ADDRESS>', '<AMOUNT PAYABLE>'];
         const replaces = ['2020-01-01', '1234', 'Employer Co Ltd', '1 Office Street', String(10,000)];
