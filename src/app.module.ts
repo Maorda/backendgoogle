@@ -6,13 +6,12 @@ import { GoogleStrategy } from './google.strategy';
 import { GoogleDriveModule  } from './managerdrive/managerdrive.module';
 import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
-import { HttpModule } from '@nestjs/axios';
 
 
 
 @Module({
   imports: [
-    HttpModule,
+    
     GoogleDriveModule.register({//el accouint es como servicio de google
       "type": "service_account",
       "project_id": "sadsinfactura",
