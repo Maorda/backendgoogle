@@ -12,12 +12,11 @@ const {GoogleAuth} = require('google-auth-library');
 export class GoogleAutenticarService{
   public drive;
   public docs;
-  public http;
+  
   
  
   constructor(
     @Inject(EFOLDERSIDS.CONFIG) private config: GoogleDriveConfig,
-    @Inject('httpService') private httpService: HttpService
     
   ) {
     const auth = new google.auth.GoogleAuth({
@@ -36,7 +35,6 @@ export class GoogleAutenticarService{
     });
     this.drive = google.drive({ version: 'v3', auth });
     this.docs = google.docs({ version: 'v1', auth })
-    this.http = httpService
     
     
     

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GoogleDocService } from './managerdrive/services/googleDocService';
 import { GoogleDriveService } from './managerdrive/services/googleDriveService';
+import { HttpService } from '@nestjs/axios';
 
 
 
@@ -11,7 +12,8 @@ export class AppService {
   }
   constructor(
     private readonly googleDriveService: GoogleDriveService,
-    private readonly googleDocService:GoogleDocService
+    private readonly googleDocService:GoogleDocService,
+    private readonly httpService:HttpService
 
     ) {}
 
@@ -58,6 +60,6 @@ export class AppService {
   }
   public async plantillaDocx(){
     
-    return await this.googleDocService.insertaParrafoDocx(["s"],"")
+    this.httpService.get("https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt").subscribe(val=>val) 
   }
 }
