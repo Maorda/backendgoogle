@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MyAuthGoogleDriveModule } from './my-auth-google-drive/my-auth-google-drive.module';
+import { MyAuthGoogleDriveModule } from './managerGoogle/AuthGoogleDrive.module';
+
 
 @Module({
   imports: [
-    
-   
-  MyAuthGoogleDriveModule],
+    MyAuthGoogleDriveModule
+  ],
   controllers: [AppController],
   providers: [AppService,
    // GoogleDriveService
