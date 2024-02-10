@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleDocService } from './managerdrive/services/googleDocService';
-import { GoogleDriveService } from './managerdrive/services/googleDriveService';
+//import { GoogleDocService } from './managerdrive/services/googleDocService';
+//import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 
 
 
@@ -11,13 +11,13 @@ export class AppService {
     return 'Hello World!';
   }
   constructor(
-    private readonly googleDriveService: GoogleDriveService,
-    private readonly googleDocService:GoogleDocService,
+    //private readonly googleDriveService: GoogleDriveService,
+    //private readonly googleDocService:GoogleDocService,
     
 
     ) {}
 
-  public async subirImagen(file: Express.Multer.File,idForGoogleElement:string): Promise<string> {
+  /*public async subirImagen(file: Express.Multer.File,idForGoogleElement:string): Promise<string> {
     try {
       const link = await this.googleDriveService.subirImagen(file,idForGoogleElement);
       // do something with the link, e.g., save it to the database
@@ -61,5 +61,5 @@ export class AppService {
   public async plantillaDocx(){
     
     
-  }
+  }*/
 }

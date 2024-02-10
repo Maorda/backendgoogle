@@ -1,8 +1,8 @@
 import { Controller, Get, Post, UseGuards,Request, UploadedFile, Body, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
-import { GoogleOAuthGuard } from './google-oauth.guard';
-import { GoogleDriveService } from './managerdrive/services/googleDriveService';
+
+//import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 
 
 
@@ -21,7 +21,7 @@ export class AppController {
     @Body() idForGoogleElement: string
     
   ) {
-    return await this.appService.subirImagen(file,idForGoogleElement)
+  //  return await this.appService.subirImagen(file,idForGoogleElement)
     //return this.appService.getHello();
   }
 
@@ -29,7 +29,7 @@ export class AppController {
   async muestraimagen(
     @Body() idForGoogleElement:string
   ){
-    return await this.appService.obtenerwebViewLink(idForGoogleElement)
+    //return await this.appService.obtenerwebViewLink(idForGoogleElement)
   }
 
   @Post('crearcarpeta')
@@ -37,16 +37,16 @@ export class AppController {
     @Body() idForGoogleElement:string,
     @Body() nameForGoogleElement:string
   ){
-    return await this.appService.crearCarpeta(idForGoogleElement,nameForGoogleElement)
+    //return await this.appService.crearCarpeta(idForGoogleElement,nameForGoogleElement)
   }
   @Post('buscareemplaza')
   async buscaReemplaza(){
-    return await this.appService.buscaReemplaza()
+    //return await this.appService.buscaReemplaza()
 
   }
   @Post('docx')
   async docx(){
-    return await this.appService.plantillaDocx()
+    //return await this.appService.plantillaDocx()
 
   }
   @Get('hola')
