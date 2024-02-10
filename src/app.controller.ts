@@ -49,5 +49,9 @@ export class AppController {
     return await this.appService.plantillaDocx()
 
   }
+  @Get('hola')
+  hola(){
+    return "hola"
+  }
   
 }
