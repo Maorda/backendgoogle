@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards,Request, UploadedFile, Body, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards,Request, UploadedFile, Body, UseInterceptors, Param } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
 
@@ -25,9 +25,9 @@ export class AppController {
     //return this.appService.getHello();
   }
 
-  @Post('muestraimagen')
+  @Get('muestraimagen/:idForGoogleElement')
   async muestraimagen(
-    @Body() idForGoogleElement:string
+    @Param() idForGoogleElement:string
   ){
     console.log(idForGoogleElement)
     return await this.appService.obtenerwebViewLink(idForGoogleElement)
