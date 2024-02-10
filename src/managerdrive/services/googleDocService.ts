@@ -6,7 +6,12 @@ import { GoogleDriveConfig } from '../types/GoogleDriveConfig';
 import { EFOLDERSIDS } from '../managerdrive.module';
 
 import { GoogleAutenticarService } from './googleAntenticarService';
+import { concat } from 'rxjs';
 const {GoogleAuth} = require('google-auth-library');
+import createReport from 'docx-templates';
+import * as fs from 'fs'
+
+
 
 @Injectable()
 export class GoogleDocService extends GoogleAutenticarService { //es el cliente que en sus metodos llamará segun sea el caso a que carpeta se almacenará
@@ -46,8 +51,221 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
 
     }
 
-    public async insertaImagenCuerpo(webViewLink:string){
-      
+    public async insertaImagenCuerpo(webViewLink:string,idForGoogleElement:string){
+      try {
+            
+        const docs = this.docs
+        const script = this.script
+    
+        /*let requests = [];
+    
+        for (let i = 0; i < finds.length; i++) {
+          requests.push(
+            {
+              replaceAllText: {
+                containsText: {
+                  text: finds[i],
+                  matchCase: true,
+                },
+                replaceText: replaces[i],
+              },
+            }
+          );
+        }*/
+
+       /* let requests = [
+          {
+          'insertInlineImage': {
+              'location': {
+                  'index': 1
+              },
+              'uri':
+                  webViewLink,
+              'objectSize': {
+                  'height': {
+                      'magnitude': 50,
+                      'unit': 'PT'
+                  },
+                  'width': {
+                      'magnitude': 50,
+                      'unit': 'PT'
+                  }
+              }
+          }
+      },
+      {
+        'insertInlineImage': {
+            'location': {
+                'index': 2
+            },
+            'uri':
+                webViewLink,
+            'objectSize': {
+                'height': {
+                    'magnitude': 50,
+                    'unit': 'PT'
+                },
+                'width': {
+                    'magnitude': 50,
+                    'unit': 'PT'
+                }
+            }
+        }
+    },
+    {
+      replaceAllText: {
+        containsText: {
+          text: '<foto>',
+          matchCase: true,
+        },
+        replaceText: 'dantecito\n',
+      },
+    },
+    {
+      'insertText': {
+          'location': {
+              'index': 3,
+          },
+          'text': "index3\n"
+      }
+  },
+           {
+      'insertText': {
+          'location': {
+              'index': 4,
+          },
+          'text': "index4\n"
+      }
+  },
+           {
+      'insertText': {
+          'location': {
+              'index': 5,
+          },
+          'text': "index5\n"
+      }
+  },
+  {
+    'insertText': {
+      'text': 'sin indice\n',
+      'endOfSegmentLocation': {}
+    }
+  },
+  {
+    'insertText': {
+      'text': 'otra ves sin indice\n',
+      'endOfSegmentLocation': {}
+    }
+  },
+  {
+    'insertInlineImage': {
+        'location': {
+            'index': 6        },
+        'uri':
+            webViewLink,
+        'objectSize': {
+            'height': {
+                'magnitude': 50,
+                'unit': 'PT'
+            },
+            'width': {
+                'magnitude': 50,
+                'unit': 'PT'
+            }
+        }
+    }
+},
+{
+  "createHeader" : {
+    "sectionBreakLocation" : {
+        "index" : 0,
+    },
+    "type" : "DEFAULT",
+  },
+  'insertText' : {
+    'location' : {
+        'segmentId' : $headerId,
+        'index' : 0,
+    },
+    'text' : 'sample text for header',
+  }
+
+},
+
+{
+  updateParagraphStyle: {
+    paragraphStyle: {
+      namedStyleType: "NORMAL_TEXT",
+      alignment: "END",
+      direction: "LEFT_TO_RIGHT",
+      borderBottom: {
+        width: { magnitude: 1.5, unit: "PT" },
+        padding: { magnitude: 1, unit: "PT" },
+        dashStyle: "SOLID"
+      }
+    },
+    range: { startIndex: 3, endIndex: 4 },
+    fields: "namedStyleType,alignment,direction,borderBottom"
+  }
+}
+
+  
+  
+  ]*/
+  let requests = [{
+    "createHeader" : {
+      "sectionBreakLocation" : {
+          "index" : 0,
+      },
+      "type" : "DEFAULT",
+    }
+   }
+  ]
+ 
+    
+        const res = await docs.documents.batchUpdate({
+          documentId:idForGoogleElement,
+          requestBody:{requests}
+        })
+
+
+        console.log(res.config.data.requests[0].createHeader.sectionBreakLocation)
+        console.log(res.data.replies)//[ { createHeader: { headerId: 'kix.px61a9y43w82' } } ]
+let requests1 = [{
+  'insertInlineImage': {
+    'location': {
+      'segmentId' : res.data.replies[0].createHeader.headerId,
+        'index': 0
+    },
+    'uri':
+        webViewLink,
+    'objectSize': {
+        'height': {
+            'magnitude': 50,
+            'unit': 'PT'
+        },
+        'width': {
+            'magnitude': 50,
+            'unit': 'PT'
+        }
+    }
+ }
+}
+   
+]
+
+
+
+const res1 = await docs.documents.batchUpdate({
+  documentId:idForGoogleElement,
+  requestBody:{requests:requests1}
+})
+
+        return res;
+      } catch (err) {
+        console.log(err);
+      }
+
     }
     /**
      *  const finds = ['<DATE>', '<NUMBER>', '<EMPLOYER>', '<EMPLOYER ADDRESS>', '<AMOUNT PAYABLE>'];
@@ -94,6 +312,135 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
             console.log(err);
           }
     }
-    public async insertaImagenCabecera(webViewLink:string){}
+
+
+    public async insertaImagenCabecera(webViewLink:string,idForGoogleElement:string){
+      const docs = this.docs
+     try {
+      let requests = [{
+        "createHeader" : {
+          "sectionBreakLocation" : {
+              "index" : 0,
+          },
+          "type" : "DEFAULT",
+        }
+       }
+      ]
+     
+        
+            const res = await docs.documents.batchUpdate({
+              documentId:idForGoogleElement,
+              requestBody:{requests}
+            })
+    
+    
+            //console.log(res.config.data.requests[0].createHeader.sectionBreakLocation)
+            //console.log(res.data.replies)//[ { createHeader: { headerId: 'kix.px61a9y43w82' } } ]
+    let requests1 = [{
+      'insertInlineImage': {
+        'location': {
+          'segmentId' : res.data.replies[0].createHeader.headerId,
+            'index': 0
+        },
+        'uri':
+            webViewLink,
+        'objectSize': {
+            'height': {
+                'magnitude': 50,
+                'unit': 'PT'
+            },
+            'width': {
+                'magnitude': 50,
+                'unit': 'PT'
+            }
+        },
+     },
+      },
+      
+        {
+          'updateParagraphStyle' : {
+            'range' : {'startIndex' : 0, 'endIndex' : 1, 'segmentId' : res.data.replies[0].createHeader.headerId},
+            'paragraphStyle' : {'alignment' : 'CENTER'},
+            'fields' : 'alignment'
+            }
+         
+    
+        }
+    
+           
+    ]
+    
+    
+    
+    await docs.documents.batchUpdate({
+      documentId:idForGoogleElement,
+      requestBody:{requests:requests1}
+    })
+    
+            return res;
+          } catch (err) {
+            console.log(err);
+          }
+    }
+
+    public async insertaParrafo(parrafo:Array<string>,idForGoogleElement:string){
+      const docs = this.docs
+      const der = await docs.documents.get({
+        documentId:idForGoogleElement
+      })
+      console.log(der.data.body.content[0].sectionBreak)
+      console.log(der.data.body.content[0])
+      const requests = []
+      parrafo.forEach((p)=>{
+        requests.push(
+          {
+            'insertText': {
+              'location': {
+                  'index': 4,
+              },
+              'text': `${p}\n`
+          }
+          },{
+            
+              'updateParagraphStyle' : {
+                'range' : {'startIndex' : 2, 'endIndex' : p.length},
+                'paragraphStyle' : {'alignment' : 'JUSTIFIED'},
+                'fields' : 'alignment'
+                }
+             
+        
+            
+          }
+        )
+
+      })
+
+  const res = await docs.documents.batchUpdate({
+  documentId:idForGoogleElement,
+  resource:{requests}
+})
+    }
+
+    public async insertaParrafoDocx(parrafo:Array<string>,idForGoogleElement:string){
+      const template = fs.readFileSync('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt');
+
+      const buffer = await createReport({
+      template,
+      data: {
+        name: 'John',
+        surname: 'Appleseed',
+      },
+    });
+    const axios = require('axios');
+axios.get('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt').then(response => {
+    console.log(response);
+    
+});
+
+    fs.writeFileSync('report.docx', buffer)
+  }
+
+    
+    
    
 }

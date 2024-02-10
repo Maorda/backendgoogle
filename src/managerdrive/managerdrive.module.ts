@@ -1,9 +1,11 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module,DynamicModule } from '@nestjs/common';
 import { GoogleAutenticarService } from './services/googleAntenticarService';
 import { GoogleDocService } from './services/googleDocService';
 import { GoogleDriveService } from './services/googleDriveService';
 
 import { GoogleDriveConfig } from './types/GoogleDriveConfig';
+
 export const enum EFOLDERSIDS {
   CONFIG = "CONFIG",
   FOLDERBASEID = "FOLDERBASEID",
@@ -11,7 +13,9 @@ export const enum EFOLDERSIDS {
   FOLDERARCHIVOSID = "FOLDERARCHIVOSID"
 
 }
-@Module({})
+@Module({
+  imports: [HttpModule],
+})
 export class GoogleDriveModule {
   /**
    *
@@ -20,6 +24,8 @@ export class GoogleDriveModule {
    */
   static register(
     googleDriveConfig: GoogleDriveConfig,
+  
+
     googleDriveBaseFolderId: string,//carpeta base en donde se lojara todos los archivos de los usuarios
     //googleDriveLogosFolderId: string,//carpeta donde se alojará el logo del usuario
     //googleDriveArchivosFolderId: string,//carpeta donde se alojara toda la gestion documentaria del usuario
@@ -32,6 +38,7 @@ export class GoogleDriveModule {
         GoogleDriveService,
         GoogleDocService,
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
+       
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
         
       ],
@@ -40,6 +47,7 @@ export class GoogleDriveModule {
         GoogleDriveService,
         GoogleDocService,
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
+     
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
       
       ],

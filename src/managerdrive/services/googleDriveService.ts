@@ -93,6 +93,7 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
           parents: [idForGoogleElement],
         },
         media: media,
+        fields: "id,webContentLink"
       });
 
       const fileId = driveResponse.data.id;

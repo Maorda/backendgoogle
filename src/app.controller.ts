@@ -44,5 +44,10 @@ export class AppController {
     return await this.appService.buscaReemplaza()
 
   }
+  @Post('docx')
+  async docx(){
+    return await this.appService.plantillaDocx()
+
+  }
   
 }

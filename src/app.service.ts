@@ -46,13 +46,17 @@ export class AppService {
   public async buscaReemplaza(){
     try{
       const idCopia = await this.googleDocService.creaCopia('1hXE80EcY-ZiY3WHN0OkJZzR_iD3d5-n1-_4jGEIM8Zs',"my copia",'1B3aTsga8DljMwFO-d5djpi4E-S5h_8os')//1-Lenn5pGOvFa8lDeLDShsci8CM1g_JxquZhQJwj6c1s
-      
       const cambiado = await this.googleDocService.buscaReemplaza(["<nombre>","<apellido>"],["dante","manrique"],idCopia)
-      console.log(cambiado)
+      //console.log(cambiado.data.replies)
+      this.googleDocService.insertaImagenCuerpo("https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png",idCopia)
+      this.googleDocService.insertaParrafo(["hola amigo que es de tu vida","por donde has estado que no se te ha visto","en tanto tiempo"],idCopia)
 
     }catch (e){
       throw new Error(e);
 
     }
+  }
+  public async plantillaDocx(){
+    return await this.googleDocService.insertaParrafoDocx(["s"],"")
   }
 }
