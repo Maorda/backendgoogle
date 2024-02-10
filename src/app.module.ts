@@ -10,7 +10,7 @@ import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
 @Module({
   imports: [
     
-    GoogleDriveModule.register({//el accouint es como servicio de google
+    /*GoogleDriveModule.register({//el accouint es como servicio de google
       "type": "service_account",
       "project_id": "sadsinfactura",
       "private_key_id": "70808a05a5e17813ee62ae5d0444a5390948ed7e",
@@ -27,9 +27,11 @@ import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
     '1VDf6sK9Whc3SMwRgPMP9jl8KQ1b5lf7t',//carpeta base SAD
     ),
     ConfigModule.forRoot(),
-
+*/
   ],
   controllers: [AppController],
-  providers: [AppService,GoogleDriveService],
+  providers: [AppService,
+   // GoogleDriveService
+  ],
 })
 export class AppModule {}
