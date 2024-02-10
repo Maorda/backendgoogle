@@ -30,7 +30,7 @@ export class AppController {
     @Param() idForGoogleElement:string
   ){
     console.log(idForGoogleElement)
-    return await this.appService.obtenerwebViewLink(idForGoogleElement)
+    return idForGoogleElement//await this.appService.obtenerwebViewLink(idForGoogleElement)
   }
 
   @Post('crearcarpeta')
