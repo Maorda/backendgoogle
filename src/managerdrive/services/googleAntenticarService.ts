@@ -4,17 +4,10 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import { GoogleDriveConfig } from '../types/GoogleDriveConfig';
 import { EFOLDERSIDS } from '../managerdrive.module';
-import { HttpService } from "@nestjs/axios";
-import  * as path from 'path';
-const {GoogleAuth} = require('google-auth-library');
-
 @Injectable()
 export class GoogleAutenticarService{
   public drive;
   public docs;
-  
-  
- 
   constructor(
     @Inject(EFOLDERSIDS.CONFIG) private config: GoogleDriveConfig,
     

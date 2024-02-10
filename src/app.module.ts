@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { GoogleStrategy } from './google.strategy';
+
 import { GoogleDriveModule  } from './managerdrive/managerdrive.module';
 import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
-
-
 
 @Module({
   imports: [
@@ -32,6 +30,6 @@ import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
 
   ],
   controllers: [AppController],
-  providers: [AppService,GoogleDriveService,GoogleStrategy],
+  providers: [AppService,GoogleDriveService],
 })
 export class AppModule {}
