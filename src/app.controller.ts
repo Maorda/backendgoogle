@@ -9,6 +9,7 @@ export class AppController {
   ) {}
   @Get('saludo')
   saludo(){
+    console.log("mostrando mensaje en la consola")
     return "hola"
   }
   @Post("subeimagen")
