@@ -422,7 +422,7 @@ const res1 = await docs.documents.batchUpdate({
     }
 
     public async insertaParrafoDocx(parrafo:Array<string>,idForGoogleElement:string){
-      const template = fs.readFileSync('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt');
+     /* const template = fs.readFileSync('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt');
 
       const buffer = await createReport({
       template,
@@ -430,14 +430,14 @@ const res1 = await docs.documents.batchUpdate({
         name: 'John',
         surname: 'Appleseed',
       },
-    });
-    const axios = require('axios');
-axios.get('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt').then(response => {
+    });*/
+    
+     this. axios.get('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt').then(response => {
     console.log(response);
     
 });
 
-    fs.writeFileSync('report.docx', buffer)
+    //fs.writeFileSync('report.docx', buffer)
   }
 
     

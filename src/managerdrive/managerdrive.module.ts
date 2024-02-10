@@ -5,7 +5,7 @@ import { GoogleDocService } from './services/googleDocService';
 import { GoogleDriveService } from './services/googleDriveService';
 
 import { GoogleDriveConfig } from './types/GoogleDriveConfig';
-
+import { HttpService } from "@nestjs/axios";
 export const enum EFOLDERSIDS {
   CONFIG = "CONFIG",
   FOLDERBASEID = "FOLDERBASEID",
@@ -37,6 +37,8 @@ export class GoogleDriveModule {
         GoogleAutenticarService,
         GoogleDriveService,
         GoogleDocService,
+        HttpService,
+
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
        
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
@@ -46,6 +48,7 @@ export class GoogleDriveModule {
         GoogleAutenticarService,
         GoogleDriveService,
         GoogleDocService,
+        HttpService,
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
      
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },

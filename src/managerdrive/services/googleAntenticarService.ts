@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import { GoogleDriveConfig } from '../types/GoogleDriveConfig';
 import { EFOLDERSIDS } from '../managerdrive.module';
-
+import { HttpService } from "@nestjs/axios";
 import  * as path from 'path';
 const {GoogleAuth} = require('google-auth-library');
 
@@ -15,7 +15,8 @@ export class GoogleAutenticarService{
   public script;
   constructor(
     @Inject(EFOLDERSIDS.CONFIG) private config: GoogleDriveConfig,
-    @Inject(EFOLDERSIDS.FOLDERBASEID) private googleDriveFolderBaseId: string,
+    //@Inject(EFOLDERSIDS.FOLDERBASEID) private googleDriveFolderBaseId: string,
+    private readonly httpService: HttpService
   ) {
     const auth = new google.auth.GoogleAuth({
       credentials: {
