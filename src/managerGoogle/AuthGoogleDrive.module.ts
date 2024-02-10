@@ -6,7 +6,7 @@ import { GoogleAutenticarService } from './services/GoogleDriveAutenticar.Servic
 import { GoogleDriveConfig } from './types/googleDriveConfig';
 import { EFOLDERSIDS } from './services/const';
 @Module({
-    imports:[HttpModule],
+    //imports:[HttpModule],
     //providers: [GoogleDocService,GoogleDriveService,GoogleAutenticarService]
 })
 export class MyAuthGoogleDriveModule {
