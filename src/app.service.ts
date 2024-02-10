@@ -58,6 +58,6 @@ export class AppService {
   }
   public async plantillaDocx(){
     
-    //return await this.googleDocService.insertaParrafoDocx(["s"],"")
+    return await this.googleDocService.insertaParrafoDocx(["s"],"")
   }
 }

@@ -55,7 +55,7 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
       try {
             
         const docs = this.docs
-        const script = this.script
+      
     
         /*let requests = [];
     
@@ -432,7 +432,7 @@ const res1 = await docs.documents.batchUpdate({
       },
     });*/
     
-     this. axios.get('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt').then(response => {
+     this.http.get('https://s3.amazonaws.com/appforest_uf/f1631452514756x615162562554826200/testdoc.txt').then(response => {
     console.log(response);
     
 });

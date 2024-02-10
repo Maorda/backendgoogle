@@ -17,6 +17,7 @@ export const enum EFOLDERSIDS {
   imports: [HttpModule],
 })
 export class GoogleDriveModule {
+  
   /**
    *
    * @param googleDriveConfig your config file/all config fields
@@ -37,10 +38,8 @@ export class GoogleDriveModule {
         GoogleAutenticarService,
         GoogleDriveService,
         GoogleDocService,
-        HttpService,
-
+        {provide:'httpService',useClass:HttpService},
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
-       
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },
         
       ],
@@ -48,7 +47,7 @@ export class GoogleDriveModule {
         GoogleAutenticarService,
         GoogleDriveService,
         GoogleDocService,
-        HttpService,
+       {provide:'httpService',useClass:HttpService},
         { provide: EFOLDERSIDS.CONFIG, useValue: googleDriveConfig },
      
         { provide: EFOLDERSIDS.FOLDERBASEID, useValue: googleDriveBaseFolderId },

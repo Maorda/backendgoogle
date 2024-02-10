@@ -12,11 +12,13 @@ const {GoogleAuth} = require('google-auth-library');
 export class GoogleAutenticarService{
   public drive;
   public docs;
-  public script;
+  public http;
+  
+ 
   constructor(
     @Inject(EFOLDERSIDS.CONFIG) private config: GoogleDriveConfig,
-    //@Inject(EFOLDERSIDS.FOLDERBASEID) private googleDriveFolderBaseId: string,
-    private readonly httpService: HttpService
+    @Inject('httpService') private httpService: HttpService
+    
   ) {
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -34,7 +36,7 @@ export class GoogleAutenticarService{
     });
     this.drive = google.drive({ version: 'v3', auth });
     this.docs = google.docs({ version: 'v1', auth })
-    
+    this.http = httpService
     
     
     
