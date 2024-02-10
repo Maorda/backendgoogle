@@ -7,7 +7,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
   ) {}
-  @Get('googleDrive')
+  @Get('saludo')
   saludo(){
     return "hola"
   }
@@ -28,6 +28,7 @@ export class AppController {
   async muestraimagen(
     @Body() idForGoogleElement:string
   ){
+    console.log(idForGoogleElement)
     return await this.appService.obtenerwebViewLink(idForGoogleElement)
   }
 
