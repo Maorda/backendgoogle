@@ -1,8 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import {  Injectable } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
 import { GoogleDocService } from './managerdrive/services/googleDocService';
 import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 
+import * as fs from 'fs'
+import createReport from 'docx-templates';
+const stream = require("stream");
 
+export interface foto{
+  data: Buffer,
+  width: 11,
+  height: 11,
+  extension: ".png" | ".jpg" | "jpeg",
+}
+export interface user{
+ name:string;
+ avatar:foto;
+}
+export interface IEvidenciaFotografica{
+  descripcion:string;
+  foto:foto;
+}
+export interface joder{
+  valores:IEvidenciaFotografica[]
+}
 
 @Injectable()
 export class AppService {
@@ -11,7 +33,8 @@ export class AppService {
   }
   constructor(
     private readonly googleDriveService: GoogleDriveService,
-    private readonly googleDocService:GoogleDocService
+    private readonly googleDocService:GoogleDocService,
+    private readonly httpService : HttpService
 
     ) {}
 
@@ -56,7 +79,76 @@ export class AppService {
 
     }
   }
-  public async plantillaDocx(){
-    return await this.googleDocService.insertaParrafoDocx(["s"],"")
+  public async plantillaDocx(documentId,data:any){
+    try {
+      
+      firstValueFrom(
+        this.httpService.get(`https://drive.google.com/uc?export=download&id=${documentId}`,{responseType:'arraybuffer'})
+      )
+      .then(async(arrayBuffer)=>{//obtiene un array buffer de la plantilla
+       
+        let template = Buffer.from(arrayBuffer.data,'binary')
+      
+        const buffer1 = await createReport({//reemplaza los valores segun plantilla
+          template,
+          data
+        });
+      
+        this.googleDocService.creaDocumento(buffer1)//crea un nuevo archivo en google, con la plantilla reemplazada
+
+      })
+  
+    } catch (error) {
+     console.error(error)
+      
+    }
+   
+    
   }
+  public async plantillaDocxV2(config:{idusuario:number,idobra:number,nrovalorizacion:number,mesvalorizacion:string},documentId:string){
+    try {
+      //axios.get, siempre devuelve una respuesta con data.
+      const { data:{"results": [user]}} = await firstValueFrom(this.httpService.get('https://randomuser.me/api'));//obtiene los datos de tipo string
+      const {data: userAvatarBuffer} = await firstValueFrom(this.httpService.get(user.picture.large, {responseType: 'arraybuffer'}));//combierte de string a buffer
+      firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=${documentId}`,{responseType:'arraybuffer'}))//copia la plantilla
+      .then(async (arrayBuffer)=>{
+        user.avatar = {
+          data: userAvatarBuffer,
+          width: 6,
+          height: 6,
+          extension: '.jpg',
+        };
+        console.log(user)
+        let template = Buffer.from(arrayBuffer.data,'binary')
+        const buffer1 = await createReport({//reemplaza los valores segun plantilla
+          template,
+          data:user
+        });
+
+        this.googleDocService.creaDocumento(buffer1)//crea un nuevo archivo en google, con la plantilla reemplazada
+
+      })
+          
+      
+           
+                      
+                        
+                      
+               
+            
+    
+   
+    
+    
+
+        
+      
+    } catch (error) {
+      
+    }
+
+  }
+  
+ 
+
 }

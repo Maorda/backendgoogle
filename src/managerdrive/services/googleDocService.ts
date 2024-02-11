@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 import { Readable } from 'stream';
 import { GoogleDriveConfig } from '../types/GoogleDriveConfig';
 import { EFOLDERSIDS } from '../managerdrive.module';
-
+const stream = require("stream");
 import { GoogleAutenticarService } from './googleAntenticarService';
 import { concat } from 'rxjs';
 const {GoogleAuth} = require('google-auth-library');
@@ -423,12 +423,73 @@ const res1 = await docs.documents.batchUpdate({
 })
     }
 
-    public async insertaParrafoDocx(parrafo:Array<string>,idForGoogleElement:string){
+    public async creaDocumento(content1:Uint8Array){
+      
+      var filename = "sample filename";  // Please set the filename of created Google Document.
+      var rootFolderId = "1B3aTsga8DljMwFO-d5djpi4E-S5h_8os";  // Please set the folder ID.
+      var bufferStream = new stream.PassThrough();
+          bufferStream.end(Uint8Array.from(content1));
+      var fileMetadata = {
+          name: filename,
+          parents: [rootFolderId],
+          mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"//"application/vnd.google-apps.document",
+          };
+      var media = {
+          mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",//"text/plain",  // <--- Added
+          body: bufferStream
+          } ;
+      this.drive.files.create({
+          resource: fileMetadata,
+          media
+      })
+
+    /*  this.drive.files.export(
+        {
+          fileId: idForGoogleElement,
+          mimeType: "text/plain",
+        },
+        { responseType: "stream" },
+        (err, { data }) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          let buf = [];
+          data.on("data", (e) => buf.push(e));
+          data.on("end", () => {
+            const stream = require("stream");
+      
+            const content = "\n" + "Added text data";  // Here, the text data is added to the existing text in Document.
+      
+            buf.push(Buffer.from(content, "binary"));
+            const bufferStream = new stream.PassThrough();
+            bufferStream.end(Uint8Array.from(Buffer.concat(buf)));
+            var media = {
+              body: bufferStream,
+            };
+            this.drive.files.update(
+              {
+                fileId: idForGoogleElement,
+                resource: {},
+                media: media,
+                fields: "id",
+              },
+              function (err, file) {
+                if (err) {
+                  console.error(err);
+                  return;
+                }
+                console.log(file.data.id);
+              }
+            );
+          });
+        }
+      );*/
       
     
    
 
-    //fs.writeFileSync('report.docx', buffer)
+  
   }
 
     

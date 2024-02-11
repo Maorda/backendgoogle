@@ -46,7 +46,37 @@ export class AppController {
   }
   @Post('docx')
   async docx(){
-    return await this.appService.plantillaDocx()
+    const data =  {
+      foto:'https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png',
+      name: 'John',
+      surname: 'Appleseed',
+      
+    }
+    return await this.appService.plantillaDocx('15FXCr7FAAA_bz_-LaIFtPx-dIVnVmFqq',data)
+
+  }
+  @Post('docxv2')
+  async docxv2(){
+        
+        
+        
+        //para generar el documento en word del panel fotografico se necesita de los siguientes parametros
+        //- idusuario
+        //- idobra
+        //- nro valorzacion
+        //- mes valorizacion
+         
+       const config = {
+        
+        idusuario:1,
+        idobra:1,
+        nrovalorizacion:0,
+        mesvalorizacion:'diciembre'
+       }
+
+        return await this.appService.plantillaDocxV2(config,'15FXCr7FAAA_bz_-LaIFtPx-dIVnVmFqq')
+
+        
 
   }
   
