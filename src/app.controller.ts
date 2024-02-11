@@ -12,9 +12,9 @@ export class AppController {
     console.log("mostrando mensaje en la consola")
     return "hola como estas"
   }
-  @Get('saludo/:persona')
+  @Get('saludopersona')
   otrosaludo(
-    @Param() persona:string
+    @Body("persona") persona:string
   ){
     return "otro saludo"+persona
   }
