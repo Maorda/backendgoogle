@@ -12,7 +12,7 @@ export class AppController {
     console.log("mostrando mensaje en la consola")
     return "hola como estas"
   }
-  @Post('saludo/:persona')
+  @Get('saludo/:persona')
   otrosaludo(
     @Param() persona:string
   ){
@@ -58,5 +58,6 @@ export class AppController {
   }
 
   
-  
+   
 }
+  
