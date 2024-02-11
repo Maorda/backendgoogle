@@ -13,10 +13,8 @@ export class AppController {
     return "hola como estas"
   }
   @Get('saludopersona')
-  otrosaludo(
-    @Body("persona") persona:string
-  ){
-    return "otro saludo"+persona
+  otrosaludo(){
+    return "otro saludo"
   }
   @Post("subeimagen")
   @UseInterceptors(
