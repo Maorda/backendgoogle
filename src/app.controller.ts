@@ -8,9 +8,15 @@ export class AppController {
     private readonly appService: AppService,
   ) {}
   @Get('saludo')
-  saludo(){
+  saludo(  ){
     console.log("mostrando mensaje en la consola")
-    return "hola"
+    return "hola como estas"
+  }
+  @Post('saludo/:persona')
+  otrosaludo(
+    @Param() persona:string
+  ){
+    return "otro saludo"+persona
   }
   @Post("subeimagen")
   @UseInterceptors(
