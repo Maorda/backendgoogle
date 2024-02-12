@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GoogleStrategy } from './google.strategy';
@@ -7,10 +7,28 @@ import { GoogleDriveModule  } from './managerdrive/managerdrive.module';
 import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 import { GoogleDriveConfig } from './managerdrive/types/GoogleDriveConfig';
 import { HttpModule } from '@nestjs/axios';
+import { configLoader } from 'config-loader';
+import { envSchema } from 'env-schema';
+import { MongooseModule } from '@nestjs/mongoose';
 
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load:[configLoader],
+      validationSchema:envSchema
+    }),
+    //modulo de configuracion de la base de datos mongo con mongoose
+    MongooseModule.forRootAsync({
+      imports:[ConfigModule],
+      inject: [ConfigService],
+      useFactory:(configService:ConfigService)=> {
+        const mongoConfig = configService.get("mongo")
+        return {
+            uri: mongoConfig.uri
+          }
+        }, 
+      }),
     HttpModule,
     GoogleDriveModule.register({//el accouint es como servicio de google
       "type": "service_account",

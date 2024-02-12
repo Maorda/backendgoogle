@@ -42,6 +42,7 @@ export class AppService {
     try {
       const link = await this.googleDriveService.subirImagen(file,idForGoogleElement);
       // do something with the link, e.g., save it to the database
+      
       return link;
     } catch (e) {
       throw new Error(e);
@@ -70,9 +71,7 @@ export class AppService {
     try{
       const idCopia = await this.googleDocService.creaCopia('1hXE80EcY-ZiY3WHN0OkJZzR_iD3d5-n1-_4jGEIM8Zs',"my copia",'1B3aTsga8DljMwFO-d5djpi4E-S5h_8os')//1-Lenn5pGOvFa8lDeLDShsci8CM1g_JxquZhQJwj6c1s
       const cambiado = await this.googleDocService.buscaReemplaza(["<nombre>","<apellido>"],["dante","manrique"],idCopia)
-      //console.log(cambiado.data.replies)
-      this.googleDocService.insertaImagenCuerpo("https://cdn.sstatic.net/Sites/stackoverflow/company/img/logos/so/so-logo.png",idCopia)
-      this.googleDocService.insertaParrafo(["hola amigo que es de tu vida","por donde has estado que no se te ha visto","en tanto tiempo"],idCopia)
+     
 
     }catch (e){
       throw new Error(e);
@@ -128,21 +127,45 @@ export class AppService {
         this.googleDocService.creaDocumento(buffer1)//crea un nuevo archivo en google, con la plantilla reemplazada
 
       })
-          
+       
+    } catch (error) {
       
-           
-                      
-                        
-                      
-               
-            
-    
-   
-    
-    
+    }
 
-        
+  }
+  public async plantillaDocxV3(config:{idusuario:number,idobra:number,nrovalorizacion:number,mesvalorizacion:string},documentId:string){
+    try {
+      //axios.get, siempre devuelve una respuesta con data.
+      const { data:{"results": [user]}} = await firstValueFrom(this.httpService.get('https://randomuser.me/api'));//obtiene los datos de tipo string
+      const { data: userAvatarBuffer} = await firstValueFrom(this.httpService.get(user.picture.large, {responseType: 'arraybuffer'}));//combierte la url de tipo string a buffer
+      const datas:Array<string> = [
+        "https://drive.google.com/uc?export=download&id=1uHd3KLvqig4XzkiGCkdO7WoO58BF_wXb",
+        "https://drive.google.com/uc?export=download&id=1B9jLEVu2bEdbYfS3hN9otUPNSfkanqNc",
+        "https://drive.google.com/uc?export=download&id=1dYYCySScMlhh9Gz3-IFL9IVXEnYR5q1Q",
+        "https://drive.google.com/uc?export=download&id=1PrTGdPXYsjjAO-ENmC-8G9iMpVPo2wDm"
+      ]
       
+      
+      
+      firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=${documentId}`,{responseType:'arraybuffer'}))//copia la plantilla
+      .then(async (arrayBuffer)=>{
+        user.avatar = {
+          data: userAvatarBuffer,
+          width: 6,
+          height: 6,
+          extension: '.jpg',
+        };
+        console.log(user)
+        let template = Buffer.from(arrayBuffer.data,'binary')
+        const buffer1 = await createReport({//reemplaza los valores segun plantilla
+          template,
+          data:user
+        });
+
+        this.googleDocService.creaDocumento(buffer1)//crea un nuevo archivo en google, con la plantilla reemplazada
+
+      })
+       
     } catch (error) {
       
     }
