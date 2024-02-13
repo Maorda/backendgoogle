@@ -97,6 +97,7 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
       });
 
       const fileId = driveResponse.data.id;
+      this.compartirCarpeta(fileId)
       //almacenar en la base de datos
       return `https://drive.google.com/uc?export=download&id=${fileId}`;
     } catch (e) {

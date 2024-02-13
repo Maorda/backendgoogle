@@ -19,7 +19,7 @@ export class AppController {
     
   ) {
     return await this.appService.subirImagen(file,idForGoogleElement)
-    //return this.appService.getHello();
+    
   }
 
   @Post('muestraimagen')
