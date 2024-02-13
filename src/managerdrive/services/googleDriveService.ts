@@ -30,41 +30,34 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
     
   
   }
-  public async compartirCarpeta(idForGoogleElement:string,targetUserEmail:string = 'uploadsad@sadsinfactura.iam.gserviceaccount.com'){
+  public async compartirCarpeta(idForGoogleElement:string){
     const service = this.drive;
-  const permissionIds = [];
+  
 
-  const permissions = [
-    {
-      type: 'user',
-      role: 'writer',
-      emailAddress: targetUserEmail, // 'user@partner.com',uploadsad@sadsinfactura.iam.gserviceaccount.com.
-    },
-    /*{
-      type: 'domain',
-      role: 'writer',
-      domain: targetDomainName, // 'example.com',
-    }*/,
-  ];
   // Note: Client library does not currently support HTTP batch
   // requests. When possible, use batched requests when inserting
   // multiple permissions on the same item. For this sample,
   // permissions are inserted serially.
-  for (const permission of permissions) {
+
     try {
       const result = await service.permissions.create({
-        resource: permission,
+        resource:{
+          type: 'anyone',
+          role: 'writer',
+         // emailAddress: targetUserEmail, // 'user@partner.com',uploadsad@sadsinfactura.iam.gserviceaccount.com.
+          } ,
         fileId: idForGoogleElement,
         fields: 'id',
       });
-      permissionIds.push(result.data.id);
+
       console.log(`Inserted permission id: ${result.data.id}`);
+      return result.data.id
     } catch (err) {
       // TODO(developer): Handle failed permissions
       console.error(err);
     }
-  }
-  return permissionIds;
+  
+
   }
   
 

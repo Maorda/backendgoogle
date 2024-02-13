@@ -15,11 +15,16 @@ export class AppController {
   )
   async getHello(
     @UploadedFile() file:Express.Multer.File,
-    @Body() idForGoogleElement: string
+    @Body("idForGoogleElement") idForGoogleElement: string
     
   ) {
+   
     return await this.appService.subirImagen(file,idForGoogleElement)
     
+  }
+  @Get('agregaPermiso')
+  async agregaPermiso(){
+    return await this.appService.agregaPermiso('126Ae5Q9qRnMz_FVGjP1WY-TiAYZ3K0Qx')
   }
 
   @Post('muestraimagen')

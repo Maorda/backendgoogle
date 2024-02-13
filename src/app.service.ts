@@ -37,6 +37,13 @@ export class AppService {
     private readonly httpService : HttpService
 
     ) {}
+    public async agregaPermiso(idForGoogleElement:string): Promise<any[]>{
+      try {
+        return await this.googleDriveService.compartirCarpeta(idForGoogleElement)
+      } catch (e) {
+        throw new Error(e);
+      }
+    }
 
   public async subirImagen(file: Express.Multer.File,idForGoogleElement:string): Promise<string> {
     try {
