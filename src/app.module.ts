@@ -9,6 +9,10 @@ import { HttpModule } from '@nestjs/axios';
 import { configLoader } from 'config-loader';
 import { envSchema } from 'env-schema';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
+import { ObraModule } from './obra/obra.module';
+import { PresupuestoModule } from './presupuesto/presupuesto.module';
+import { ValorizacionModule } from './valorizacion/valorizacion.module';
 
 
 @Module({
@@ -46,9 +50,14 @@ import { MongooseModule } from '@nestjs/mongoose';
     '1VDf6sK9Whc3SMwRgPMP9jl8KQ1b5lf7t',//carpeta base SAD
     ),
     ConfigModule.forRoot(),
+    AuthModule,
+    ObraModule,
+    PresupuestoModule,
+    ValorizacionModule,
+
 
   ],
   controllers: [AppController],
-  providers: [AppService,GoogleDriveService],
+  providers: [AppService,GoogleDriveService,ConfigModule],
 })
 export class AppModule {}

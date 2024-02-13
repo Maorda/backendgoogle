@@ -121,6 +121,49 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
   
   
   }
+  public async comprimeDescargaCarpeta(idForGoogleElement:string){
+    try {
+      return await this.drive.files.get(
+        {fileId: idForGoogleElement, alt: "media",},
+        {responseType: "stream"},
+        (err, { data }) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          let buf = [];
+          data.on("data", (e) => buf.push(e));
+          data.on("end", () => {
+            const buffer = Buffer.concat(buf);
+            console.log(buffer);
+          });
+        }
+      );
+      
+    } catch (error) {
+      console.error(error)
+      
+    }
+    
+  }
+  public async exportaAsPdf(idForGoogleElement:string){
+    const service = this.drive;
+    
+  
+    try {
+      const result = await service.files.export(
+        {
+          fileId: idForGoogleElement,
+          mimeType: 'application/pdf',
+        },
+        { responseType: 'stream' }
+      );
+  
+      return result;
+    } catch (err) {
+      console.log('Failed to export PDF', err);
+    }
+  }
   
     
    
