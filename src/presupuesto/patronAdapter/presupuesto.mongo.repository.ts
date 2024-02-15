@@ -11,8 +11,8 @@ export class PresupuestoMongoRepository implements IPresupuestoRepository{
     async creaPresupuesto( presupuesto: Presupuesto): Promise<any> {
         
        const nuevoPresupuesto = new Presupuesto();
-       nuevoPresupuesto.obraId = presupuesto.obraId
-       nuevoPresupuesto.presupuestoId = randomUUID();
+       nuevoPresupuesto.obraId = presupuesto.obraId;
+       nuevoPresupuesto.item = presupuesto.item;
        nuevoPresupuesto.partidas = presupuesto.partidas
        
        let otropresupuesto  = await this.presupuestoModel.find({obraId:presupuesto.obraId})

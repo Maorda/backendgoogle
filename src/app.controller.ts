@@ -1,5 +1,6 @@
-import { Controller, Get, Post, UseGuards,Request, UploadedFile, Body, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, UseGuards,Request, UploadedFile, Body, UseInterceptors, Res, StreamableFile } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 import { AppService } from './app.service';
 
 
@@ -15,7 +16,7 @@ export class AppController {
   )
   async getHello(
     @UploadedFile() file:Express.Multer.File,
-    @Body("idForGoogleElement") idForGoogleElement: string
+    @Body("idForGoogleElement") idForGoogleElement: string//en el cliente debe tener el mismo nombre
     
   ) {
    
@@ -81,5 +82,16 @@ export class AppController {
         
 
   }
+  @Get('descargazip')
+  descargazip(@Res({ passthrough: true }) response: Response){
+    return this.appService.comprimeDescargaCarpeta('1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy')
+  }
+  @Get('obtenlosidsfolder')
+  obtenIdsFolder(){
+    return this.appService.listaLosIdsEnCarpeta('1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy')
+  }
+
+  
+
   
 }

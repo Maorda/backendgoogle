@@ -1,7 +1,7 @@
 import { Partida } from "../entities/presupuesto.entity";
 
 export class CreaPresupuestoDto{
-    presupuestoId:string;
+    item:string;
     obraId:string
     partidas:Partida[]
 }

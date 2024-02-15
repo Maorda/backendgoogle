@@ -29,32 +29,10 @@ export class ObraController {
       return this.obraService.buscaObraPorUsuarioId(otrousuarioId );
     }  
     @UseInterceptors(
-        FileInterceptor('file', {
-          storage: diskStorage({
-            async destination(req, file, callback) {
-                const filePath = (`./uploads/cabeceras`)// por motivos que pictures:filename es afectado, se cambiará la ruta
-                //const filePath = (`./uploads/todaslasfotos`)
-                //se necesita crear la carpeta a mano
-                await fs.promises.mkdir(`${filePath}`,{recursive:true})
-                //callback(null,`./uploads`)
-                callback(null,`${filePath}`)
-            },//: ,//`${_}./uploads`,
-            filename: ( req, file, cb)=>{
-                const name = file.mimetype.split("/");
-                const newFileName = name[0].split(" ").join("_")+Date.now()+'.png';//garantizar que la imagen ternga la extencion png, al momento de generar la cabecera de excel
-              cb(null, newFileName)
-            },
-          }),
-         fileFilter: (req,file,cb)=>{
-            if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-                return cb(null,false)
-            }
-            cb(null,true)
-         },
-        }),
+        FileInterceptor('file')
       )
     @Post('crea')
-    createObra(
+    async createObra(
       
       @UploadedFile() file:Express.Multer.File,
       @Body() agregaObra:any,
@@ -64,19 +42,17 @@ export class ObraController {
         if(!file){
           throw new BadRequestException("file is not a imagen")
         }
-        const usuarioLogin:string | { [key: string]: any; } = this.jwtService.decode(autorization) 
+        const tmp = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzMyMTgzMzBiNmRjMGUxZDIzYmE5MCIsImVtYWlsIjoidW5vIiwiaWF0IjoxNzA4MDEzNjM4LCJleHAiOjE3MDgxMDAwMzh9.KnEAk_jS2XxhSXL1qolCccrzcv5Qfdax1wV_7L3ZXCg'
+        const usuarioLogin:string | { [key: string]: any; } = this.jwtService.decode(tmp) 
         const usuarioId = usuarioLogin["id"]
-      
-        const response = {
-           filePath:`https://192.168.1.86:3033/obra/logocabecera/${file.filename}`
-          
-        };
+        const filePathInDrive = await this.obraService.subeImagenADrive(file,agregaObra.idForGoogleElement)
+       
         
         
         const body = {
           usuarioId,
-          obraId:agregaObra.obraId,
-          logoUrl : response.filePath
+          obraId:agregaObra.obraId,//devuelve null en caso no se tenga ninguna obra
+          logoUrl : filePathInDrive
         }
 
             

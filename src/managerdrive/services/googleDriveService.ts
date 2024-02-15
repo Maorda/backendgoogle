@@ -2,10 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { Buffer } from 'buffer';
 import { Readable } from 'stream';
-
+import * as fs from 'fs'
+import * as path from 'path'
 import { GoogleAutenticarService } from './googleAntenticarService';
-
-
+import * as mime from 'mime-types'
+import { ObraController } from 'src/obra/controller/obra.controller';
 @Injectable()
 export class GoogleDriveService extends GoogleAutenticarService {
 
@@ -67,7 +68,7 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
    * @return link link four your file on Google Drive
    */
   public async subirImagen(file: Express.Multer.File,idForGoogleElement:string): Promise<string> {
-    
+    console.log(idForGoogleElement)
     try {
       
       const { originalname, buffer } = file;
@@ -83,7 +84,7 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
         requestBody: {
           name: originalname,
           mimeType: file.mimetype,
-          parents: [idForGoogleElement],
+          parents: ['1PKVB5o8vSyAB4f4vEGe0YzRnZlwxwLAk'],
         },
         media: media,
         fields: "id,webContentLink"
@@ -121,30 +122,69 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
   
   
   }
-  public async comprimeDescargaCarpeta(idForGoogleElement:string){
+  public async descargaTodosLosArchivosCarpeta(idForGoogleElement:string){//descarga tyodos los archivos de la carpeta
+    
+      var service = this.drive
     try {
-      return await this.drive.files.get(
-        {fileId: idForGoogleElement, alt: "media",},
-        {responseType: "stream"},
-        (err, { data }) => {
-          if (err) {
-            console.log(err);
-            return;
-          }
-          let buf = [];
-          data.on("data", (e) => buf.push(e));
-          data.on("end", () => {
-            const buffer = Buffer.concat(buf);
-            console.log(buffer);
-          });
-        }
-      );
+
+      const result =  await service.files.list({
+        q: "'" + idForGoogleElement + "' in parents and trashed=false",
+        fields: "files(id, name, mimeType)"
+      });
+      result.data.files.forEach((file)=>{
+        let dest = fs.createWriteStream(`d:\\sistemavalorizaciones\\${file.name}`)
+        service.files.get(
+          { fileId:file.id, alt: 'media' },
+          { responseType: 'stream' }
+        ).then(res=>{
+          res.data.on('end',()=>{
+
+            console.log('Done downloading file.');
+          }).on('error', err => {
+            console.error('Error downloading file.');
+          }).on('data',d=>{
+            console.log({"tama":d.length})
+            d+='';
+          console.log(d);
+          //data will be here
+          // pipe it to write stream
+  
+          }).pipe(dest);
+  
+        })
+        
+
+      })
       
     } catch (error) {
       console.error(error)
       
     }
     
+  }
+  public async getChildfilesIdIndFolder(idForGoogleElement:string){
+    console.log("'1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy' in parents")
+    const service = this.drive;
+    let filesId = [];
+    
+    try {
+      const result =  await service.files.list({
+        q: "'" + idForGoogleElement + "' in parents and trashed=false",
+        fields: "files(id, name, mimeType)"
+      });
+      result.data.files.forEach((file)=>{
+        filesId.push(file.id)
+
+      })
+      return filesId
+      
+    } catch (error) {
+      console.error(error)
+      
+    }
+    
+    
+
   }
   public async exportaAsPdf(idForGoogleElement:string){
     const service = this.drive;

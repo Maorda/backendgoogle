@@ -23,7 +23,7 @@ export class PresupuestoController {
     : Promise<Presupuesto> {
         
         const nuevoPresupuesto:CreaPresupuestoDto = {
-            presupuestoId:randomUUID(),
+            item:creaPresupuestoDto.item ,
             obraId:creaPresupuestoDto.obraId,
 	        partidas: creaPresupuestoDto.partidas 
         }

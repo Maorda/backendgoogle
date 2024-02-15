@@ -6,7 +6,7 @@ import { Partida } from "../entities/presupuesto.entity";
 
 export class PartidaSchema{
     @Prop()
-    partidaId:string;//numero que viene del archivo excel
+    item:string;//numero que viene del archivo excel
     @Prop()
     descripcion:string;
     @Prop()
@@ -28,7 +28,7 @@ export class PresupuestoSchema{
     obraId:mongoose.Schema.Types.ObjectId;
     
     @Prop()
-    presupuestoId:string;
+    item:string;
     
    //grega un elemento al array, de tipo cadena
     /*@Prop([String])

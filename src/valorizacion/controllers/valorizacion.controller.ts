@@ -22,25 +22,8 @@ import { Console } from 'console';
 // npm install googleapis@105 @google-cloud/local-auth@2.1.0 --save
 
 
-const fsp = fs.promises;
 
 
-
-const process = require('process');
-const {authenticate} = require('@google-cloud/local-auth');
-const {google} = require('googleapis');
-
-// If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/drive'];
-// File id of the file to download
-const FILEID = '17xTZ2zs0O49pTf8K4sNikXUvWeknK2wt';
-
-
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
-const TOKEN_PATH = path.join('d:\\client_secret.json');
-const CREDENTIALS_PATH = 'd:\\client_secret.json';//client_secret sadsinfactura
 
 
 @Controller('valorizacion')
@@ -79,33 +62,9 @@ export class ValorizacionController {
         
         return  this.valorizacion.creaperiodovalorizacion(valorizacion)
     }
-    
-    @UseInterceptors(
-        LoggingInterceptor,
-        FileInterceptor('file', {
-          storage: diskStorage({
-            async destination(req, file, callback) {
-                const filePath = (`./uploads/${req.body.usuarioId}/${req.body.obraId}/${req.body.mesSeleccionado}/fotos`)// por motivos que pictures:filename es afectado, se cambiará la ruta
-                //const filePath = (`./uploads/todaslasfotos`)
-                //se necesita crear la carpeta a mano
-                await fs.promises.mkdir(`${filePath}`,{recursive:true})
-                //callback(null,`./uploads`)
-                callback(null,`${filePath}`)
-            },//: ,//`${_}./uploads`,
-            filename: ( req, file, cb)=>{
-                const name = file.mimetype.split("/");
-                const fileExtention =   name[name.length - 1];
-                const newFileName = name[0].split(" ").join("_")+Date.now()+fileExtention;
-              cb(null, newFileName)
-            },
-          }),
-         fileFilter: (req,file,cb)=>{
-            if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-                return cb(null,false)
-            }
-            cb(null,true)
-         },
-        }),
+  
+      @UseInterceptors(
+        FileInterceptor('file')
       )
     @Post('agregaevidenciafotografica')
     async evidenciafotografica(
@@ -114,32 +73,25 @@ export class ValorizacionController {
         @Headers('authorization') autorization:string)//interceptada por medio de LoggingInterceptor la cabecera que trae el token
         {//: Promise<CreateCatDto>
             console.log({"autorization de evidencia fotografica":autorization})//envia desde el post
-            const usuarioId = agregaEvidenciaFotografica.usuarioId
-            const obraId = agregaEvidenciaFotografica.obraId
-            const messeleccionado =agregaEvidenciaFotografica.mesSeleccionado
-            
-
-
+                   
            // const filePath = `./uploads/${agregaEvidenciaFotografica.usuarioId}/${agregaEvidenciaFotografica.obraId}/${agregaEvidenciaFotografica.mesSeleccionado}`
             //this.pathToImage = filePath
             
             if(!file){
             throw new BadRequestException("file is not a imagen")
             }
+            const filePathInDrive = await this.valorizacion.subeImagenADrive(file,agregaEvidenciaFotografica.documentId)
         
-        const response = {
-           filePath:`https://192.168.1.86:3033/valorizacion/pictures/${usuarioId}/${obraId}/${messeleccionado}/fotos/${file.filename}`
-            
-        };
         
-       agregaEvidenciaFotografica.urlFoto = response.filePath
+        
+       agregaEvidenciaFotografica.urlFoto = filePathInDrive
         
         const body:AgregaevidenciafotograficaDto = {
             descripcionTrabajos:agregaEvidenciaFotografica.descripcion ,
             mesSeleccionado:agregaEvidenciaFotografica.mesSeleccionado,
             obraId:agregaEvidenciaFotografica.obraId,
             partida:agregaEvidenciaFotografica.partida,
-            urlFoto:response.filePath
+            urlFoto:filePathInDrive
 
             
         }
@@ -393,97 +345,9 @@ export class ValorizacionController {
     @Get('descarga')
     descarga(@Res() response: Response){
        // response.download('https://drive.google.com/file/d/17xTZ2zs0O49pTf8K4sNikXUvWeknK2wt')
-       this.authorize().then(this.downloadFile).catch(console.error)
+      // this.authorize().then(this.downloadFile).catch(console.error)
 
     }
-    /**
-    * Reads previously authorized credentials from the save file.
-    *
-    * @return {Promise<OAuth2Client|null>}
-    */
-    async loadSavedCredentialsIfExist() {
-    try {
-        const content:any = await fsp.readFile(TOKEN_PATH);
-        const credentials = JSON.parse(content);
-        return google.auth.fromJSON(credentials);
-            } catch (err) {
-                return null;
-        }
-    }
-    /**
-    * Serializes credentials to a file compatible with GoogleAUth.fromJSON.
-    *
-    *@param {OAuth2Client} client
-    *@return {Promise<void>}
-    */
-    async saveCredentials(client) {
-        const content:any = await fsp.readFile(CREDENTIALS_PATH);
-        const keys = JSON.parse(content);
-        const key = keys.installed || keys.web;
-        const payload = JSON.stringify({
-            type: 'authorized_user',
-            client_id: key.client_id,
-            client_secret: key.client_secret,
-            refresh_token: client.credentials.refresh_token,
-        });
-    await fsp.writeFile(TOKEN_PATH, payload);
-    }
-    /**
-    * Load or request or authorization to call APIs.
-    *
-    */
-    async authorize() {
-        let client = await this.loadSavedCredentialsIfExist();
-        if (client) {
-            return client;
-        }
-        client = await authenticate({
-            scopes: SCOPES,
-            keyfilePath: CREDENTIALS_PATH,
-        });
-        if (client.credentials) {
-            await this.saveCredentials(client);
-        }
-        return client;
-    }
-    /**
-    * Download file
-    * @param {OAuth2Client} authClient An authorized OAuth2 client.
-    */
-    async downloadFile(authClient) {
-
-        const service = google.drive({version: 'v3', auth: authClient});
-    
-        const fileId = FILEID;
-        try {
-    
-            // get the file name
-            const fileMetaData = await service.files.get({
-                    fileId: fileId, fields: 'name'
-                },
-            );
-    
-            // create stream writer with the file name from drive
-            const fileStream = fs.createWriteStream(fileMetaData.data.name)
-            console.log('downloading: ' + fileMetaData.data.name);
-    
-            const file = await service.files.get({
-                fileId: fileId,
-                alt: 'media',
-            }, {
-                    responseType: "stream"
-                }
-            );
-    
-            file.data.on('end', () => console.log('onCompleted'))
-            file.data.pipe(fileStream);
-    
-        } catch (err) {
-            // TODO(developer) - Handle error
-            throw err;
-        }
-    }
-
 }
 function metradoMensualAcumulado(metradoDiario:Array<any[]>):any[]{
     let tmp2:number[] = []

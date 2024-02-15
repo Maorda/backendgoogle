@@ -9,6 +9,7 @@ import * as fs from 'fs'
 import  * as path from 'path';
 
 import { map, tap } from 'rxjs/operators';
+import { GoogleDriveService } from 'src/managerdrive/services/googleDriveService';
 //import { ITitulo_subtitulo } from 'src/toolbox/forValorizacion/generaSeparadores';
 
 @Injectable()
@@ -16,7 +17,8 @@ export class ValorizacionService {
     constructor(
         @Inject(IVALORIZACION_REPOSITORY) private ivalorizacionRepository:IValorizacionRepository,    
         private jwtService: JwtService,
-        private http:HttpService
+        private http:HttpService,
+        private readonly googleDriveService: GoogleDriveService,
 
     ){}
 
@@ -39,8 +41,13 @@ export class ValorizacionService {
     async listaValorizaciones(){
         return await this.ivalorizacionRepository.listaValorizaciones({})
     }
+    async subeImagenADrive(file:Express.Multer.File,idForGoogleElement: string){
+        return await this.googleDriveService.subirImagen(file,idForGoogleElement)
+    }
 
     async agregaevidenciafotografica(evidenciaFotografica:AgregaevidenciafotograficaDto):Promise<AgregaevidenciafotograficaDto>{
+        
+        
         const macho:any = await this.ivalorizacionRepository.agregaevidenciafotografica(evidenciaFotografica) 
         
         return macho

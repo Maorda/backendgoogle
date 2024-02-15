@@ -6,7 +6,7 @@ import { GoogleDriveService } from './managerdrive/services/googleDriveService';
 
 import * as fs from 'fs'
 import createReport from 'docx-templates';
-const stream = require("stream");
+
 
 export interface foto{
   data: Buffer,
@@ -177,6 +177,25 @@ export class AppService {
       
     }
 
+  }
+  public async comprimeDescargaCarpeta(idForGoogleElement:string){
+    
+    try {
+      return await this.googleDriveService.descargaTodosLosArchivosCarpeta(idForGoogleElement)
+      
+    } catch (error) {
+      console.error(error)
+    }
+    
+  }
+  public async listaLosIdsEnCarpeta(idForGoogleElement:string){
+    try {
+      return await this.googleDriveService.getChildfilesIdIndFolder(idForGoogleElement)
+      
+    } catch (error) {
+      console.error(error)
+    }
+    
   }
   
  

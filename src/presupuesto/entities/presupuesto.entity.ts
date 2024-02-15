@@ -1,5 +1,5 @@
 export class Partida{
-    partidaId:string;//numero que viene del archivo excel
+    item:string;//numero que viene del archivo excel
     descripcion:string;
     u_medida:string;
     metrado:number;
@@ -9,7 +9,7 @@ export class Partida{
 }
 export class Presupuesto{
     obraId:string;
-    presupuestoId:string;
+    item:string;
     partidas:Partida[]
 
 }
