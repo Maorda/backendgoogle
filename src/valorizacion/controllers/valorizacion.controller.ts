@@ -28,8 +28,9 @@ import { Console } from 'console';
 
 @Controller('valorizacion')
 export class ValorizacionController {
+    
     constructor(
-        private valorizacion:ValorizacionService,
+        private valorizacionService:ValorizacionService,
         private jwtService: JwtService,
     ){
 
@@ -41,12 +42,12 @@ export class ValorizacionController {
     async listaValorizaciones():Promise<Valorizacion[]>
     {
         
-        return this.valorizacion.listaValorizaciones()
+        return this.valorizacionService.listaValorizaciones()
     }
 
     @Get('buscaPorId')
     async buscaPorId(obraId:string):Promise<Valorizacion>{
-        return  this.valorizacion.buscaById(obraId)
+        return  this.valorizacionService.buscaById(obraId)
     }
     
     @Get('listaValorizacionByobraid/:obraId')
@@ -54,13 +55,13 @@ export class ValorizacionController {
         @Param('obraId') obraId:string
         ):Promise<Valorizacion >{
 
-        return this.valorizacion.buscaValoByObraId(obraId)
+        return this.valorizacionService.buscaValoByObraId(obraId)
     }
 
     @Post('creaperiodovalorizacion')
     async createValorizacion(@Body() valorizacion:any){ 
         
-        return  this.valorizacion.creaperiodovalorizacion(valorizacion)
+        return  this.valorizacionService.creaperiodovalorizacion(valorizacion)
     }
   
       @UseInterceptors(
@@ -80,7 +81,7 @@ export class ValorizacionController {
             if(!file){
             throw new BadRequestException("file is not a imagen")
             }
-            const filePathInDrive = await this.valorizacion.subeImagenADrive(file,agregaEvidenciaFotografica.documentId)
+            const filePathInDrive = await this.valorizacionService.subeImagenADrive(file,agregaEvidenciaFotografica.documentId)
         
         
         
@@ -96,7 +97,7 @@ export class ValorizacionController {
             
         }
        
-        const macho:any = await this.valorizacion.agregaevidenciafotografica(body) 
+        const macho:any = await this.valorizacionService.agregaevidenciafotografica(body) 
        
         return macho
         
@@ -181,7 +182,7 @@ export class ValorizacionController {
             partida:cuerpo.partida,
             urlFoto:response.filePath
         }
-        return this.valorizacion.actualizaEvidenciaFotografica(body)
+        return this.valorizacionService.actualizaEvidenciaFotografica(body)
 
     }
     /*@UseInterceptors(LoggingInterceptor)
@@ -228,7 +229,7 @@ export class ValorizacionController {
     }*/
     @Get('curvas')
     curvas(){
-        return this.valorizacion.llamaAPandas()
+        return this.valorizacionService.llamaAPandas()
     }
 
     /**
@@ -246,7 +247,7 @@ export class ValorizacionController {
     ){
         console.log({obraId,mesSeleccionado})
         
-        return this.valorizacion.dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId,mesSeleccionado)
+        return this.valorizacionService.dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId,mesSeleccionado)
 
     }
     @Post('valo')
@@ -340,7 +341,7 @@ export class ValorizacionController {
             configuracion
         }
         console.log(data)
-        return this.valorizacion.valorizacion(data)
+        return this.valorizacionService.valorizacion(data)
     }
     @Get('descarga')
     descarga(@Res() response: Response){

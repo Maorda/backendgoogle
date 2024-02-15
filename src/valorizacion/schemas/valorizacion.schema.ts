@@ -19,19 +19,13 @@ export type EvidenciaFotograficaModel = Model<EvidenciaFotograficaSchemaDTO>
 @Schema()
 export class PeriodoSchemaDTO{
     @Prop()
+    periodoSeleccionado:string;
+    @Prop()
     mesSeleccionado:string;
-    
-    /*@Prop()
-    periodoMes:string;
     @Prop()
     periodoRangoEtiquetas:string;
-    @Prop()
-    sumaValorizacionActual:number;
-    @Prop()
-    sumaPorcentajeAcumuladoActual:number;
-    @Prop()
-    sumaCostoDirectoActual:number;
-    */
+    
+
     //inicio funciona
     //@Prop([EvidenciaFotografica])
     //panelFotografico:EvidenciaFotografica[]

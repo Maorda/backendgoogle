@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { FilterQuery, UpdateQuery } from "mongoose";
 import { AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto";
 import { ValorizacionModel } from "../schemas/valorizacion.schema";
+import { ConflictException } from "@nestjs/common";
 
 
 
@@ -27,7 +28,7 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
     }
     async creaperiodovalorizacion(creaValorizacionDto: CreateValorizacionDto): Promise<any> {
        console.log({"obraid":creaValorizacionDto.obraId.code})
-        const nuevaValorizacion = new Valorizacion();
+       const nuevaValorizacion = new Valorizacion();
        
        nuevaValorizacion.obraId = creaValorizacionDto.obraId.code
 
@@ -42,7 +43,14 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
         return this.valorizacionModel.create(nuevaValorizacion)
        }
        else{
+        otraValorizacion.periodos.map((al,index)=>{
+            if(al.mesSeleccionado === creaValorizacionDto.periodos[0].mesSeleccionado ){
+                throw new ConflictException("PERIODO YA EXISTE")
+            }
+        })
         console.log("existe valorizacion")
+        //valida el periodo seleccionado
+
         return await this.valorizacionModel.
             findOneAndUpdate(
                 {obraId:nuevaValorizacion.obraId},//obra encontrada
