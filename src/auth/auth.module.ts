@@ -41,7 +41,13 @@ import { IAUTH_REPOSITORY } from './patronAdapter/auth.interface.repository';
       JwtstrategyService, JwtauthguardService, LoggingInterceptor,
       {provide:IAUTH_REPOSITORY,useClass:AuthMongoRepository}
     ],
-  exports:[AuthService,PassportModule,JwtstrategyService,JwtauthguardService],
+  exports:[
+    AuthService,
+    PassportModule,
+    JwtstrategyService,
+    JwtauthguardService,
+    {provide:IAUTH_REPOSITORY,useClass:AuthMongoRepository}
+  ],
   controllers: [AuthController]
 })
 export class AuthModule {}

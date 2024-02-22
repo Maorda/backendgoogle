@@ -52,6 +52,7 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
       });
 
       console.log(`Inserted permission id: ${result.data.id}`);
+      
       return result.data.id
     } catch (err) {
       // TODO(developer): Handle failed permissions
@@ -84,14 +85,14 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
         requestBody: {
           name: originalname,
           mimeType: file.mimetype,
-          parents: ['1PKVB5o8vSyAB4f4vEGe0YzRnZlwxwLAk'],
+          parents: [idForGoogleElement],
         },
         media: media,
         fields: "id,webContentLink"
       });
 
       const fileId = driveResponse.data.id;
-      this.compartirCarpeta(fileId)
+      //this.compartirCarpeta(fileId)
       //almacenar en la base de datos
       return `https://drive.google.com/uc?export=download&id=${fileId}`;
     } catch (e) {

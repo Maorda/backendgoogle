@@ -9,7 +9,8 @@ export class Periodo{
 
 }
 
-export class Valorizacion{
+export class ValorizacionEntity{
     obraId:string;
     periodos:Periodo[];
+    valorizacionFolderId
 }

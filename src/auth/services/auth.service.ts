@@ -1,6 +1,8 @@
 import { ConflictException, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
+
+import { GoogleDriveService } from 'src/managerdrive/services/googleDriveService';
 import { AuthDto } from '../dtos/auth.dto';
 import { AuthEntity } from '../entity/auth.entity';
 import { IAuthRepository, IAUTH_REPOSITORY } from '../patronAdapter/auth.interface.repository';
@@ -9,7 +11,8 @@ import { IAuthRepository, IAUTH_REPOSITORY } from '../patronAdapter/auth.interfa
 export class AuthService {
     constructor(
         @Inject(IAUTH_REPOSITORY) private authRepository:IAuthRepository,
-        private jwtService:JwtService
+        private jwtService:JwtService,
+        private readonly googleDriveService: GoogleDriveService,
         ){ }
 
     async validateUser(email:string,password:string):Promise<any>{
@@ -27,7 +30,7 @@ export class AuthService {
         const {email, password} = userObjectLogin;
 
         const findUser = await this.authRepository.findOne({email})
-        console.log(findUser)
+        
         if(!findUser){
             console.log('usuario no encontrado')
             throw new HttpException('USER_NOT_FOUND',404)
@@ -51,7 +54,7 @@ export class AuthService {
           
           return data
     }
-    async create(userObjectCreate: AuthDto):Promise<AuthEntity> {
+    async create(userObjectCreate: AuthDto) {
       const {email} = userObjectCreate
         const usrExist = await this.authRepository.findOne({email})
         if(usrExist){
@@ -61,10 +64,20 @@ export class AuthService {
       const {password} = userObjectCreate;
       
       const plainToHash = await bcrypt.hash(password,10);
+       
       userObjectCreate  = {...userObjectCreate, password:plainToHash}
      
+        
+      const usuario = await this.authRepository.register(userObjectCreate)
+     
+      const usuarioFolderId =    await this.googleDriveService.crearCarpeta(
+            '1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy',//carpeta base, es la carpeta creada en drive destinada a almacenar sad. No se modifica.
+            usuario.usuarioId)
 
-      return await this.authRepository.register(userObjectCreate)
+      await this.actualizaFolderId(usuario.usuarioId,usuarioFolderId)
+
+      return usuario
+
     }
     async lista(){
       return this.authRepository.lista()
@@ -74,6 +87,17 @@ export class AuthService {
       
       return this.jwtService.decode(token)
       
+
+    }
+    async actualizaFolderId(usuarioId:string,usuarioFolderId:string){
+      const body:AuthEntity={
+        usuarioId:usuarioId,
+        email:"",
+        password:"string",
+        usuarioFolderId
+      }  
+      
+      return await this.authRepository.actualizaFolderId(body,{usuarioFolderId})
 
     }
     

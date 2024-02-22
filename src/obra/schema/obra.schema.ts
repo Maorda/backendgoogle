@@ -9,7 +9,9 @@ export class ObraSchema {
     @Prop()
     usuarioId:string;
     @Prop()
-    logoUrl:string; 
+    logoUrl:string;
+    @Prop()
+    obraFolderId:string
 }
 
 export const OBRA_SCHEMA = SchemaFactory.createForClass(ObraSchema)

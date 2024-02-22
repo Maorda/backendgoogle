@@ -10,6 +10,10 @@ class AuthSchema {
     email:string;
     @Prop()
     password:string;
+    @Prop()
+    usuarioFolderId:string
+ 
+   
 
 } 
 export const AUTH_SCHEMA =  SchemaFactory.createForClass(AuthSchema)

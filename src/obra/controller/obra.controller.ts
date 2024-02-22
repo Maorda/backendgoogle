@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, UseInterceptors, Post, Res,Req,UploadedFi
 import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
 import { parametros } from 'src/constants/configGlobal';
-import { listaObrasPorUsuarioIdDto } from '../dtos/crud.obra';
-import { Obra } from '../entities/obra.entity';
+import { CreaObraDto, listaObrasPorUsuarioIdDto } from '../dtos/crud.obra';
+import { ObraEntity } from '../entities/obra.entity';
 import { ObraService } from '../services/obra.servicio';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -16,15 +16,21 @@ export class ObraController {
         private obraService:ObraService,
         private jwtService: JwtService,
     ){}
+    @Get('obraById')
+    async obraById(
+      @Body() obraId:string
+    ){
+      return await this.obraService.buscaObraByIdObra(obraId)
+    }
     @Get('listaobras')
-    async getObras(): Promise<Obra[]> {
+    async getObras(): Promise<ObraEntity[]> {
         return this.obraService.listaObras();
     }
     
     @Get(':usuarioId')
     async getObraByUserId(
         @Param('usuarioId') otrousuarioId: string,
-        ): Promise<Obra[]> {
+        ): Promise<ObraEntity[]> {
 
       return this.obraService.buscaObraPorUsuarioId(otrousuarioId );
     }  
@@ -33,28 +39,22 @@ export class ObraController {
       )
     @Post('crea')
     async createObra(
-      
+      //cada obra nueva es una nueva carpeta
       @UploadedFile() file:Express.Multer.File,
-      @Body() agregaObra:any,
+     // @Body() agregaObra:CreaObraDto,
       @Headers('authorization') autorization:string//interceptada por medio de LoggingInterceptor la cabecera que trae el token
       ): Promise<any> {
         
         if(!file){
           throw new BadRequestException("file is not a imagen")
         }
-        const tmp = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NzMyMTgzMzBiNmRjMGUxZDIzYmE5MCIsImVtYWlsIjoidW5vIiwiaWF0IjoxNzA4MDEzNjM4LCJleHAiOjE3MDgxMDAwMzh9.KnEAk_jS2XxhSXL1qolCccrzcv5Qfdax1wV_7L3ZXCg'
-        const usuarioLogin:string | { [key: string]: any; } = this.jwtService.decode(tmp) 
-        const usuarioId = usuarioLogin["id"]
-        const filePathInDrive = await this.obraService.subeImagenADrive(file,agregaObra.idForGoogleElement)
-       
-        
-        
         const body = {
-          usuarioId,
-          obraId:agregaObra.obraId,//devuelve null en caso no se tenga ninguna obra
-          logoUrl : filePathInDrive
-        }
+          autorization,
+          file
 
+        }
+        
+        
             
         return this.obraService.creaObra(body)
         

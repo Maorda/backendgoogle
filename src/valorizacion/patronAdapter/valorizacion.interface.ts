@@ -1,30 +1,30 @@
 import { FilterQuery, UpdateQuery } from "mongoose"
 import { AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto"
 
-import { EvidenciaFotografica, Valorizacion } from "../entities/valorizacion.entity"
+import { EvidenciaFotografica, ValorizacionEntity } from "../entities/valorizacion.entity"
 
 export const  IVALORIZACION_REPOSITORY = 'IValorizacionRepository'
 export interface IValorizacionRepository{
     creaperiodovalorizacion(creaValorizacionDto:CreateValorizacionDto
-    ):Promise<Valorizacion>
+    ):Promise<ValorizacionEntity>
     
     buscaById(
-        entityFilterQuery: FilterQuery<Valorizacion>,
+        entityFilterQuery: FilterQuery<ValorizacionEntity>,
         projection?: Record<string, unknown>
     ):Promise<any>
 
     buscaValorizacionByObraId(
-        entityFilterQuery: FilterQuery<Valorizacion>,
+        entityFilterQuery: FilterQuery<ValorizacionEntity>,
         projection?: Record<string, unknown>
-    ):Promise<Valorizacion | null>
+    ):Promise<ValorizacionEntity | null>
     
     actualizaValorizacion(
-        entityFilterQuery: FilterQuery<Valorizacion>,
+        entityFilterQuery: FilterQuery<ValorizacionEntity>,
         updateEntityData: UpdateQuery<unknown>
-    ):Promise<Valorizacion>
+    ):Promise<ValorizacionEntity>
     
-    listaValorizaciones(entityFilterQuery: FilterQuery<Valorizacion>
-    ):Promise<Valorizacion[] | null>
+    listaValorizaciones(entityFilterQuery: FilterQuery<ValorizacionEntity>
+    ):Promise<ValorizacionEntity[] | null>
 
     agregaevidenciafotografica(
         evidenciaFotograficaDto:AgregaevidenciafotograficaDto,

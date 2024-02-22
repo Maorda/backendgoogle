@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ValorizacionController } from './controllers/valorizacion.controller';
-import { Valorizacion } from './entities/valorizacion.entity';
+import { ValorizacionEntity } from './entities/valorizacion.entity';
 import { IVALORIZACION_REPOSITORY } from './patronAdapter/valorizacion.interface';
 import { ValorizacionMongoRepository } from './patronAdapter/valorizacion.mongo.repository';
 import { VALORIZACION_SCHEMA } from './schemas/valorizacion.schema';
@@ -23,11 +23,15 @@ import { TokenInterceptor } from './services/intersepta_Token';
 import { AuthService } from 'src/auth/services/auth.service';
 import { PictureInterceptor } from './services/pictureInterceptor';
 import { HttpModule } from "@nestjs/axios";
+import { ObraModule } from 'src/obra/obra.module';
+import { ObraService } from 'src/obra/services/obra.servicio';
 @Module({
   imports:[
     HttpModule,
     AuthModule,
-      MongooseModule.forFeature([{name:Valorizacion.name,schema:VALORIZACION_SCHEMA}]),
+    ObraModule,
+
+    MongooseModule.forFeature([{name:ValorizacionEntity.name,schema:VALORIZACION_SCHEMA}]),
       JwtModule.register({
         secret:jwtConstants.secret,
         signOptions:{expiresIn:'1d'}
@@ -36,7 +40,9 @@ import { HttpModule } from "@nestjs/axios";
       
   ],
   providers: [
-    IsUniqueConstraint,ValorizacionService,
+    IsUniqueConstraint,
+    ValorizacionService,
+    ObraService,
     {provide:IVALORIZACION_REPOSITORY,useClass:ValorizacionMongoRepository},
     JwtstrategyService, JwtauthguardService, LoggingInterceptor,PictureInterceptor
     ],

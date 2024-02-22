@@ -16,6 +16,10 @@ export interface IAuthRepository{
         projection?: Record<string, unknown>
     ):Promise<AuthEntity>
     lista():Promise<any[] | null>
-    
+
+    actualizaFolderId(
+        entityFilterQuery:FilterQuery<AuthEntity>,
+        entity: Partial<AuthEntity>
+        ):Promise<AuthEntity>
     
 }

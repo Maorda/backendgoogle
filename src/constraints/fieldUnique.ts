@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getModelToken,InjectModel } from '@nestjs/mongoose';
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments,registerDecorator, ValidationOptions } from 'class-validator';
-import { Valorizacion } from 'src/valorizacion/entities/valorizacion.entity';
+import { ValorizacionEntity } from 'src/valorizacion/entities/valorizacion.entity';
 import { IValorizacionRepository, IVALORIZACION_REPOSITORY } from 'src/valorizacion/patronAdapter/valorizacion.interface';
 import { ValorizacionModel } from 'src/valorizacion/schemas/valorizacion.schema';
 
@@ -26,7 +26,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
             console.log({"validando":"validnado desde el constraint custom"})
 
             
-            console.log(getModelToken(Valorizacion.name));
+            console.log(getModelToken(ValorizacionEntity.name));
             filter[args.property] = value;
             const count = await this.ivalorizacionRepository.listaValorizaciones({});
             return !count;

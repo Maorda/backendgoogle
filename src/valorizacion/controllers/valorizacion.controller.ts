@@ -3,7 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { diskStorage } from 'multer';
 import { AgregaevidenciafotograficaDto, CreateValorizacionDto, EvidenciaFotograficaDTO } from '../dtos/crud.valorizacion.dto';
-import { EvidenciaFotografica, Valorizacion } from '../entities/valorizacion.entity';
+import { EvidenciaFotografica, ValorizacionEntity } from '../entities/valorizacion.entity';
 import { ValorizacionService } from '../services/valorizacion.servicio';
 import * as fs from 'fs'
 import  * as path from 'path';
@@ -21,11 +21,6 @@ import { Console } from 'console';
 
 // npm install googleapis@105 @google-cloud/local-auth@2.1.0 --save
 
-
-
-
-
-
 @Controller('valorizacion')
 export class ValorizacionController {
     
@@ -39,29 +34,38 @@ export class ValorizacionController {
     public pathToImage:string
     
     @Get('lista')
-    async listaValorizaciones():Promise<Valorizacion[]>
+    async listaValorizaciones():Promise<ValorizacionEntity[]>
     {
         
         return this.valorizacionService.listaValorizaciones()
     }
 
     @Get('buscaPorId')
-    async buscaPorId(obraId:string):Promise<Valorizacion>{
+    async buscaPorId(obraId:string):Promise<ValorizacionEntity>{
         return  this.valorizacionService.buscaById(obraId)
     }
     
     @Get('listaValorizacionByobraid/:obraId')
     async buscaValoPorObraId(
         @Param('obraId') obraId:string
-        ):Promise<Valorizacion >{
+        ):Promise<ValorizacionEntity>{
 
         return this.valorizacionService.buscaValoByObraId(obraId)
     }
 
     @Post('creaperiodovalorizacion')
-    async createValorizacion(@Body() valorizacion:any){ 
+    async createValorizacion(
+        @Body() valorizacion:any
+        ){
+        //busca el id de la obra que esta siendo valorizada dentro de la coleccion obra, para obtener el obraFolderId
+        const obra = await this.valorizacionService.buscaObraById(valorizacion.obraId)
         
-        return  this.valorizacionService.creaperiodovalorizacion(valorizacion)
+        //crea dentro de la obra que esta siendo valorizada una carpeta con el periodo correspondiente al actual
+        const mesSeleccionado = await this.valorizacionService.creaCarpetaDrive(obra.obraFolderId,valorizacion.periodos[0].mesSeleccionado)
+        console.log(mesSeleccionado)
+        //const valo = await this.valorizacionService.creaperiodovalorizacion(valorizacion)
+
+        //return {...valo,mesSeleccionado}
     }
   
       @UseInterceptors(
@@ -75,29 +79,30 @@ export class ValorizacionController {
         {//: Promise<CreateCatDto>
             console.log({"autorization de evidencia fotografica":autorization})//envia desde el post
                    
-           // const filePath = `./uploads/${agregaEvidenciaFotografica.usuarioId}/${agregaEvidenciaFotografica.obraId}/${agregaEvidenciaFotografica.mesSeleccionado}`
-            //this.pathToImage = filePath
-            
+              
             if(!file){
-            throw new BadRequestException("file is not a imagen")
+                throw new BadRequestException("file is not a imagen")
             }
-            const filePathInDrive = await this.valorizacionService.subeImagenADrive(file,agregaEvidenciaFotografica.documentId)
-        
-        
-        
-       agregaEvidenciaFotografica.urlFoto = filePathInDrive
-        
-        const body:AgregaevidenciafotograficaDto = {
-            descripcionTrabajos:agregaEvidenciaFotografica.descripcion ,
-            mesSeleccionado:agregaEvidenciaFotografica.mesSeleccionado,
-            obraId:agregaEvidenciaFotografica.obraId,
-            partida:agregaEvidenciaFotografica.partida,
-            urlFoto:filePathInDrive
-
+            //1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy   en esta carpeta se creará su panel fotografico de este usuario, para esta obra, para esa valorizacion
+            const usuarioId = this.valorizacionService.validateToken(autorization)
             
-        }
+            //las evidencias fotograficas se tienen que guardar en una carpeta llamada panelfotografico
+            await this.valorizacionService.creaCarpetaDrive(agregaEvidenciaFotografica.obraId,'Panel Fotografico')//el id de la carpeta obra de este usuario.
+            const filePathInDrive = await this.valorizacionService.subeImagenADrive(file,agregaEvidenciaFotografica.idForGoogleElement)
+        
+        
+        
+            agregaEvidenciaFotografica.urlFoto = filePathInDrive
+        
+            const body:AgregaevidenciafotograficaDto = {
+                descripcionTrabajos:agregaEvidenciaFotografica.descripcion ,
+                mesSeleccionado:agregaEvidenciaFotografica.mesSeleccionado,
+                obraId:agregaEvidenciaFotografica.obraId,
+                partida:agregaEvidenciaFotografica.partida,
+                urlFoto:filePathInDrive
+            }
        
-        const macho:any = await this.valorizacionService.agregaevidenciafotografica(body) 
+            const macho:any = await this.valorizacionService.agregaevidenciafotografica(body) 
        
         return macho
         

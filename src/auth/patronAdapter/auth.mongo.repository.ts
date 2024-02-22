@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel, } from "@nestjs/mongoose";
-import mongoose,{  FilterQuery, UpdateQuery } from 'mongoose';
+import {  FilterQuery, UpdateQuery } from 'mongoose';
 import { randomUUID } from 'node:crypto';
 import { Usuario } from "src/usuario/entities/entidad.usuario";
 import { AuthDto } from "../dtos/auth.dto";
@@ -14,6 +14,22 @@ export class AuthMongoRepository implements IAuthRepository{
     constructor(
         @InjectModel(AuthEntity.name) private authModel:AuthModel
     ){}
+    async actualizaFolderId(entityFilterQuery: FilterQuery<AuthEntity>, entity: Partial<AuthEntity>,): Promise<AuthEntity> {
+
+        const macho:any = await this.authModel
+        .findOneAndUpdate(
+            {  "usuarioId":entityFilterQuery.usuarioId}, 
+            {
+                '$set': { 'usuarioFolderId': entityFilterQuery.usuarioFolderId },
+            },
+            {
+                new : true
+            }
+            
+        ).exec()
+
+        return macho
+    }
     
     lista(): Promise<any[]> {
         return this.authModel.find({}).exec()
@@ -30,7 +46,7 @@ export class AuthMongoRepository implements IAuthRepository{
         nuevoUsuario.email = registra.email;
         nuevoUsuario.password = registra.password
         nuevoUsuario.usuarioId = nuevoUsuario._id
-        
+        nuevoUsuario.usuarioFolderId =""
         return await new this.authModel(nuevoUsuario).save()
     }
     

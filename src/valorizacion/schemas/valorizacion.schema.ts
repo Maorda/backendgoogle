@@ -1,6 +1,6 @@
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose'
 import mongoose, {  Document, Model, ObjectId } from 'mongoose'
-import { EvidenciaFotografica, Periodo, Valorizacion } from "../entities/valorizacion.entity";
+import { EvidenciaFotografica, Periodo, ValorizacionEntity } from "../entities/valorizacion.entity";
 import {Type} from 'class-transformer'
 
 @Schema()
@@ -46,6 +46,9 @@ export class ValorizacionSchemaDTO{
     //obraId: mongoose.Schema.Types.ObjectId;
     @Prop()
     obraId:string;
+    @Prop()
+    valorizacionFolderId:string;
+
 
     //inicio funciona
     //@Prop([Periodo])

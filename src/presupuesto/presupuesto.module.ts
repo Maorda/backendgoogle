@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Obra } from 'src/obra/entities/obra.entity';
+import { ObraEntity } from 'src/obra/entities/obra.entity';
 import { OBRA_SCHEMA } from 'src/obra/schema/obra.schema';
 import { PresupuestoController } from './controllers/presupuesto.controller';
 import { Presupuesto } from './entities/presupuesto.entity';
@@ -17,7 +17,7 @@ import { PresupuestoService } from './services/presupuesto.servicio';
         
       },
       {
-        name:Obra.name,schema:OBRA_SCHEMA
+        name:ObraEntity.name,schema:OBRA_SCHEMA
       }
     ])
   ],
