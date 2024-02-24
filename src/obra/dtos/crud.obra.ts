@@ -10,6 +10,8 @@ export class CreaObraDto{
     logoUrl:string;
     @IsString()
     obraFolderId:string
+    @IsString()
+    logoFolderId:string
     
     
 }
@@ -51,4 +53,9 @@ export class ActualizaFolderIdV1{
     obraFolderId:string
 
 
+}
+
+export class ActualizaLogoFolderId{
+  obraId:string;
+  logoFolderId:string;
 }

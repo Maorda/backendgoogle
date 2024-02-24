@@ -30,6 +30,7 @@ import { ObraService } from 'src/obra/services/obra.servicio';
     HttpModule,
     AuthModule,
     ObraModule,
+    
 
     MongooseModule.forFeature([{name:ValorizacionEntity.name,schema:VALORIZACION_SCHEMA}]),
       JwtModule.register({

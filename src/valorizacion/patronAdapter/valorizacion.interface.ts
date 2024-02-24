@@ -1,5 +1,5 @@
 import { FilterQuery, UpdateQuery } from "mongoose"
-import { AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto"
+import { ActualizaValorizacionFolderIdDTO, AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto"
 
 import { EvidenciaFotografica, ValorizacionEntity } from "../entities/valorizacion.entity"
 
@@ -8,6 +8,8 @@ export interface IValorizacionRepository{
     creaperiodovalorizacion(creaValorizacionDto:CreateValorizacionDto
     ):Promise<ValorizacionEntity>
     
+
+
     buscaById(
         entityFilterQuery: FilterQuery<ValorizacionEntity>,
         projection?: Record<string, unknown>
@@ -22,6 +24,9 @@ export interface IValorizacionRepository{
         entityFilterQuery: FilterQuery<ValorizacionEntity>,
         updateEntityData: UpdateQuery<unknown>
     ):Promise<ValorizacionEntity>
+    actualizaValorizacionFolderId(
+        entityFilterQuery: FilterQuery<ActualizaValorizacionFolderIdDTO>,
+        projection?: Record<string, unknown>):Promise<ActualizaValorizacionFolderIdDTO>
     
     listaValorizaciones(entityFilterQuery: FilterQuery<ValorizacionEntity>
     ):Promise<ValorizacionEntity[] | null>
@@ -31,10 +36,14 @@ export interface IValorizacionRepository{
     ):Promise<AgregaevidenciafotograficaDto>
     //actualizaciones
     actualizaEvidenciaFotografica(evidenciaFotograficaDto:AgregaevidenciafotograficaDto):Promise<any>
+  
+
+    
 
     
 //consultas
 dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId:string,mesSeleccionado:string):Promise<any>
+buscaMesSeleccionadoFolderIdPorMesSeleccionado(obraId:string,mesSeleccionado:string):Promise<any>
 
 
 }

@@ -3,4 +3,5 @@ export class ObraEntity {
     obraId:string;
     logoUrl:string;
     obraFolderId:string
+    logoFolderId:string
 }

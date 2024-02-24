@@ -12,6 +12,8 @@ class AuthSchema {
     password:string;
     @Prop()
     usuarioFolderId:string
+    @Prop()
+    logoFolderId:string
  
    
 

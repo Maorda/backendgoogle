@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Get, Headers, Param, Patch, Post
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { diskStorage } from 'multer';
-import { AgregaevidenciafotograficaDto, CreateValorizacionDto, EvidenciaFotograficaDTO } from '../dtos/crud.valorizacion.dto';
+import { ActualizaValorizacionDto, ActualizaValorizacionFolderIdDTO, AgregaevidenciafotograficaDto, CreateValorizacionDto, EvidenciaFotograficaDTO } from '../dtos/crud.valorizacion.dto';
 import { EvidenciaFotografica, ValorizacionEntity } from '../entities/valorizacion.entity';
 import { ValorizacionService } from '../services/valorizacion.servicio';
 import * as fs from 'fs'
@@ -55,17 +55,23 @@ export class ValorizacionController {
 
     @Post('creaperiodovalorizacion')
     async createValorizacion(
-        @Body() valorizacion:any
+        @Body() valorizacion:any,
+        
         ){
+            console.log(valorizacion)
         //busca el id de la obra que esta siendo valorizada dentro de la coleccion obra, para obtener el obraFolderId
-        const obra = await this.valorizacionService.buscaObraById(valorizacion.obraId)
+        
+        const obra = await this.valorizacionService.buscaObraById(valorizacion.obraId)//se encuentra dentro usuarioFolderId/obraFolderId
         
         //crea dentro de la obra que esta siendo valorizada una carpeta con el periodo correspondiente al actual
-        const mesSeleccionado = await this.valorizacionService.creaCarpetaDrive(obra.obraFolderId,valorizacion.periodos[0].mesSeleccionado)
-        console.log(mesSeleccionado)
-        //const valo = await this.valorizacionService.creaperiodovalorizacion(valorizacion)
+        const mesSeleccionadoFolderId = await this.valorizacionService.creaCarpetaDrive(obra.obraFolderId,valorizacion.periodos[0].mesSeleccionado)//este id es para cada periodo , no para la valorizacion global
+        
+        valorizacion.periodos[0].mesSeleccionadoFolderId = mesSeleccionadoFolderId
+        const priodoValoRegistro = await this.valorizacionService.creaperiodovalorizacion(valorizacion)
+        
+       
 
-        //return {...valo,mesSeleccionado}
+        return priodoValoRegistro
     }
   
       @UseInterceptors(
@@ -77,55 +83,48 @@ export class ValorizacionController {
         @Body() agregaEvidenciaFotografica:any,
         @Headers('authorization') autorization:string)//interceptada por medio de LoggingInterceptor la cabecera que trae el token
         {//: Promise<CreateCatDto>
-            console.log({"autorization de evidencia fotografica":autorization})//envia desde el post
                    
               
             if(!file){
                 throw new BadRequestException("file is not a imagen")
             }
-            //1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy   en esta carpeta se creará su panel fotografico de este usuario, para esta obra, para esa valorizacion
-            const usuarioId = this.valorizacionService.validateToken(autorization)
+            //buscar obraId, en donde seran agregados las evidencias fotograficas
+            //const obra = await this.valorizacionService.buscaValoByObraId(agregaEvidenciaFotografica.obraId)
             
+            const responseMesSeleccionado = await this.valorizacionService.buscaMesSeleccionadoFolderIdPorMesSeleccionado(agregaEvidenciaFotografica.obraId,agregaEvidenciaFotografica.mesSeleccionado)
+            
+            //necesitamos saber, a que periodo pertenece, lo sacamos de consultar la valorizacion, pasando como parametro la obraId y el mes
             //las evidencias fotograficas se tienen que guardar en una carpeta llamada panelfotografico
-            await this.valorizacionService.creaCarpetaDrive(agregaEvidenciaFotografica.obraId,'Panel Fotografico')//el id de la carpeta obra de este usuario.
-            const filePathInDrive = await this.valorizacionService.subeImagenADrive(file,agregaEvidenciaFotografica.idForGoogleElement)
-        
-        
-        
-            agregaEvidenciaFotografica.urlFoto = filePathInDrive
-        
+            console.log(responseMesSeleccionado.periodos[0].mesSeleccionadoFolderId)
+            const panelFotograficoFolderId = await this.valorizacionService.creaCarpetaDrive(responseMesSeleccionado.periodos[0].mesSeleccionadoFolderId,'Panel Fotografico')//el id de la carpeta obra de este usuario.
+            const filePathInDrive = await this.valorizacionService.subeImagenADrive(file,panelFotograficoFolderId)
             const body:AgregaevidenciafotograficaDto = {
-                descripcionTrabajos:agregaEvidenciaFotografica.descripcion ,
+                descripcionTrabajos:agregaEvidenciaFotografica.descripcionTrabajos ,
                 mesSeleccionado:agregaEvidenciaFotografica.mesSeleccionado,
                 obraId:agregaEvidenciaFotografica.obraId,
                 partida:agregaEvidenciaFotografica.partida,
                 urlFoto:filePathInDrive
             }
-       
             const macho:any = await this.valorizacionService.agregaevidenciafotografica(body) 
        
-        return macho
+            return macho
         
        
-    }
+        }
     //necesario para mostrar la imagen en el clinte 
      // llama automaticamente cuando se hace la referencia [src] =192.168.1.86:30333 . . .. 
     //
     
-    @Get('pictures/:usuarioid/:obraid/:messeleccionado/fotos/:filename')
+    @Get('pictures/:fileId')
     async getPicture(
-        @Param('usuarioid') usuarioid:any,
-        @Param('obraid') obraid:any,
-        @Param('filename') filename:any, 
-        @Param('messeleccionado') messeleccionado:any, 
+        @Param('fileId') fileId:any,
         @Res() res:Response,
         
     ){
     //necesitas cargar desde aca lo necesario para que path file name no dependa  de agrgarevidenciafotografica
+     res.send(`https://drive.google.com/uc?export=view&id=${fileId}`)
+     //https://drive.google.com/uc?export=view&id=1llt9PCpU6Wlm97Y9GyIS1QpxOPPBuRtg
     
-     const filePath = `./uploads/${usuarioid}/${obraid}/${messeleccionado}/fotos`
-            
-        res.sendFile(filename,{root:`${filePath}`})
     }
     /**
      * actualiza evidencia fotografica

@@ -1,3 +1,5 @@
+
+
 export class EvidenciaFotografica{
     partida:string;
     descripcionTrabajos:string;
@@ -5,12 +7,14 @@ export class EvidenciaFotografica{
 }
 export class Periodo{
     mesSeleccionado:string; 
-    panelFotografico:EvidenciaFotografica[]
+    panelFotografico:EvidenciaFotografica[];
+    mesSeleccionadoFolderId:string
 
 }
 
 export class ValorizacionEntity{
     obraId:string;
     periodos:Periodo[];
-    valorizacionFolderId
+    valorizacionFolderId:string;
+    
 }

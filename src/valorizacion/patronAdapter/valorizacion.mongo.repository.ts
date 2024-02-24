@@ -5,7 +5,7 @@ import { IValorizacionRepository } from "./valorizacion.interface";
 import { randomUUID } from 'node:crypto';
 
 import { FilterQuery, UpdateQuery } from "mongoose";
-import { AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto";
+import { ActualizaValorizacionFolderIdDTO, AgregaevidenciafotograficaDto, CreateValorizacionDto } from "../dtos/crud.valorizacion.dto";
 import { ValorizacionModel } from "../schemas/valorizacion.schema";
 import { ConflictException } from "@nestjs/common";
 
@@ -27,20 +27,23 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
         })
     }
     async creaperiodovalorizacion(creaValorizacionDto: CreateValorizacionDto): Promise<any> {
-       console.log({"obraid":creaValorizacionDto.obraId.code})
-       const nuevaValorizacion = new ValorizacionEntity();
+       console.log({"obraid":creaValorizacionDto.obraId})
+       /*const nuevaValorizacion = new ValorizacionEntity();
        
        nuevaValorizacion.obraId = creaValorizacionDto.obraId.code
 
        nuevaValorizacion.periodos = creaValorizacionDto.periodos
+       nuevaValorizacion.valorizacionFolderId =""*/
+       creaValorizacionDto.valorizacionFolderId =""
+       creaValorizacionDto.periodos[0].mesSeleccionadoFolderId = creaValorizacionDto.periodos[0].mesSeleccionadoFolderId
        
-       let otraValorizacion  = await this.valorizacionModel.findOne({obraId:creaValorizacionDto.obraId.code})
+       let otraValorizacion  = await this.valorizacionModel.findOne({obraId:creaValorizacionDto.obraId})
        console.log({"resultado de buscar el obraid":otraValorizacion})
       
        if(otraValorizacion === null ){
         console.log("es una nueva valorizacion")
         await this.valorizacionModel.syncIndexes()//Hace que los índices en MongoDB coincidan con los índices definidos en el esquema de este modelo
-        return this.valorizacionModel.create(nuevaValorizacion)
+        return this.valorizacionModel.create(creaValorizacionDto)
        }
        else{
         otraValorizacion.periodos.map((al,index)=>{
@@ -53,10 +56,10 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
 
         return await this.valorizacionModel.
             findOneAndUpdate(
-                {obraId:nuevaValorizacion.obraId},//obra encontrada
+                {obraId:creaValorizacionDto.obraId},//obra encontrada
                 {
                     $push:{
-                    "periodos":nuevaValorizacion.periodos[0]
+                    "periodos":creaValorizacionDto.periodos[0]
                     }
                 },
                 {
@@ -66,6 +69,26 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
             ).exec()
 
        }
+    }
+    async actualizaValorizacionFolderId(creaValorizacionDto: ActualizaValorizacionFolderIdDTO){
+        
+        const macho:any = await this.valorizacionModel
+        .findOneAndUpdate(
+            {"obraId":creaValorizacionDto.obraId},
+            {
+                
+                $set:{
+                    "valorizacionFolderId":creaValorizacionDto.valorizacionFolderId
+                    
+                }
+            },
+            {
+                new : true
+            }
+        ).exec()
+        
+        return macho
+
     }
     async buscaById(entityFilterQuery: FilterQuery<ValorizacionEntity>, projection?: Record<string, unknown>): Promise<any> {
         return this.valorizacionModel.findOne( entityFilterQuery,{
@@ -88,7 +111,7 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
         nuevaEvidenciaFotografica.descripcionTrabajos =evidenciaFotografica.descripcionTrabajos;
         nuevaEvidenciaFotografica.partida=evidenciaFotografica.partida;
         nuevaEvidenciaFotografica.urlFoto=evidenciaFotografica.urlFoto;
-        console.log({"evidenciaFotografica en reposytori":evidenciaFotografica})
+        //console.log({"evidenciaFotografica en reposytori":evidenciaFotografica})
         
         /*
             { <query conditions> },
@@ -123,7 +146,33 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
         return await this.valorizacionModel.findOne({"obraId":obraId}).exec()
 
     }
+
+    
+
+    async buscaMesSeleccionadoFolderIdPorMesSeleccionado(obraId:string,mesSeleccionado:string){
+        return await this.valorizacionModel
+        .findOne(
+            {"obraId":obraId, 
+                $and:[
+                    {
+                        periodos:{
+                            $elemMatch:
+                            {
+                                "mesSeleccionado":mesSeleccionado
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                periodos:{$elemMatch:{"mesSeleccionado":mesSeleccionado}}
+            }
+            
+            
+        )
+    }
     //actualizaciones
+
     async actualizaEvidenciaFotografica(evidenciaFotografica:AgregaevidenciafotograficaDto): Promise<any> {
         const nuevaEvidenciaFotografica = new AgregaevidenciafotograficaDto()
         nuevaEvidenciaFotografica.descripcionTrabajos =evidenciaFotografica.descripcionTrabajos;

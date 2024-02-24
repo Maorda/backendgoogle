@@ -41,7 +41,7 @@ export class ObraController {
     async createObra(
       //cada obra nueva es una nueva carpeta
       @UploadedFile() file:Express.Multer.File,
-     // @Body() agregaObra:CreaObraDto,
+      @Body() obraId:any,
       @Headers('authorization') autorization:string//interceptada por medio de LoggingInterceptor la cabecera que trae el token
       ): Promise<any> {
         
@@ -50,7 +50,9 @@ export class ObraController {
         }
         const body = {
           autorization,
-          file
+          file,
+          obraId
+
 
         }
         

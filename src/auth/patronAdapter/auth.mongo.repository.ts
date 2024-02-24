@@ -30,6 +30,23 @@ export class AuthMongoRepository implements IAuthRepository{
 
         return macho
     }
+    async actualizaLogoFolderId(entityFilterQuery: FilterQuery<AuthEntity>, entity: Partial<AuthEntity>,): Promise<AuthEntity> {
+        console.log(entityFilterQuery)
+
+        const macho:any = await this.authModel
+        .findOneAndUpdate(
+            {  "usuarioId":entityFilterQuery.usuarioId}, 
+            {
+                '$set': { 'logoFolderId': entityFilterQuery.logoFolderId },
+            },
+            {
+                new : true
+            }
+            
+        ).exec()
+
+        return macho
+    }
     
     lista(): Promise<any[]> {
         return this.authModel.find({}).exec()
@@ -47,6 +64,7 @@ export class AuthMongoRepository implements IAuthRepository{
         nuevoUsuario.password = registra.password
         nuevoUsuario.usuarioId = nuevoUsuario._id
         nuevoUsuario.usuarioFolderId =""
+        nuevoUsuario.logoFolderId =""
         return await new this.authModel(nuevoUsuario).save()
     }
     

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { FilterQuery } from 'mongoose';
-import { CreaObraDto, listaObrasPorUsuarioIdDto } from '../dtos/crud.obra';
+import { ActualizaFolderId, ActualizaLogoFolderId, CreaObraDto, listaObrasPorUsuarioIdDto } from '../dtos/crud.obra';
 import {  ObraEntity } from '../entities/obra.entity';
 import { IObraRepository, IOBRA_REPOSITORY } from '../patronAdapter/obra.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -17,33 +17,21 @@ export class ObraService {
         private readonly googleDriveService: GoogleDriveService,
     ){}
     
-    async creaObra(body: any):Promise<ObraEntity> 
+    async creaObra(body: any)
+    //:Promise<ObraEntity> 
     {
         const jwt = body.autorization.replace('Bearer ', '');   
         const usuarioLogin:string | { [key: string]: any; } = this.jwtService.decode(jwt) 
         const usuarioId = usuarioLogin['id']
-
-        
-        const obraId = await this.iobraRepository.buscaObraByusuarioIdAndObraId({usuarioId:usuarioId})
-        console.log({"resultado de buscar obraid":obraId})
-        
-        
-        if(obraId === null){ //en caso de no encontrar, crear una obra nueva.
-            //encontrar el id de la carpeta del usuario registrado, crear una carpeta dentro de esta llamada logo
-            const folderPadreId = await this.authRepository.findOne({email:usuarioLogin["email"]})
-            const folderIdLogo = await this.creaCarpeta(folderPadreId.usuarioFolderId,"logo")
-            const logoUrl = await this.subeImagenADrive(body.file,folderIdLogo)
-            const obra = await  this.iobraRepository.creaObra({"usuarioId":usuarioId,"logoUrl":logoUrl,"obraFolderId":""})
-            const obraFolderId = await this.creaCarpeta(folderPadreId.usuarioFolderId,obra.obraId)
-            await this.actualizaFolderId(obra.obraId,obraFolderId)
-
-           return obra
-        }
-        //en caso que lo encuentre, retornar
-        
-
-        
-        
+        //busca al usuario registrado, para obtener el usuarioFolderId, logoFolderId
+        const usuario = await this.authRepository.findOne({email:usuarioLogin["email"]})
+        //la obra es nueva 
+        const logoUrl = await this.subeImagenADrive(body.file,usuario.logoFolderId)
+        const obra = await  this.iobraRepository.creaObra({"usuarioId":usuarioId,"logoUrl":logoUrl,"obraFolderId":"",logoFolderId:usuario.logoFolderId})
+        const obraFolderId = await this.creaCarpeta(usuario.usuarioFolderId,obra.obraId)
+        await this.actualizaFolderId(obra.obraId,obraFolderId)
+                 
+        return obra
     }
     async creaCarpeta(folderadreId:string,nombreCarpeta:string){
         return await this.googleDriveService.crearCarpeta(folderadreId,nombreCarpeta)
@@ -76,12 +64,24 @@ export class ObraService {
           logoUrl:"",
           obraFolderId,
           obraId,
-          usuarioId:""
+          usuarioId:"",
+          logoFolderId:""
         }  
         
         return await this.iobraRepository.actualizaFolderId(body,{obraFolderId})
   
-      }
+    }
+    async actualizaLogoFolderId(obraId:string,logoFolderId:string){
+        const body:ActualizaLogoFolderId={
+          
+          logoFolderId,
+          obraId:"",
+          
+        }  
+        
+        return await this.iobraRepository.actualizaLogoFolderId(body,{logoFolderId})
+  
+    }
    
    
 }

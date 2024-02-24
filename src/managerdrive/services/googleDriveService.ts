@@ -111,11 +111,11 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
         fields:"webViewLink"
         //, webContentLink"
       })
-      console.log(link)
+      console.log({"myenlace":link.data.webViewLink})
       //buscar en la base de datos
 
       
-      return `${link}`;
+      return `${link.data.webViewLink}`;
     } catch (e) {
       throw new Error(e);
     }

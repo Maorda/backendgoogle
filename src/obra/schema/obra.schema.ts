@@ -12,6 +12,7 @@ export class ObraSchema {
     logoUrl:string;
     @Prop()
     obraFolderId:string
+    
 }
 
 export const OBRA_SCHEMA = SchemaFactory.createForClass(ObraSchema)

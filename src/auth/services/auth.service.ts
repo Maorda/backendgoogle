@@ -73,8 +73,14 @@ export class AuthService {
       const usuarioFolderId =    await this.googleDriveService.crearCarpeta(
             '1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy',//carpeta base, es la carpeta creada en drive destinada a almacenar sad. No se modifica.
             usuario.usuarioId)
+      const logoFolderId = await this.googleDriveService.crearCarpeta(
+        usuarioFolderId,
+        'Logo'
+      )
 
       await this.actualizaFolderId(usuario.usuarioId,usuarioFolderId)
+      await this.actualizaLogoFolderId(usuario.usuarioId,logoFolderId)
+      
 
       return usuario
 
@@ -94,11 +100,23 @@ export class AuthService {
         usuarioId:usuarioId,
         email:"",
         password:"string",
-        usuarioFolderId
+        usuarioFolderId,
+        logoFolderId:""
       }  
       
       return await this.authRepository.actualizaFolderId(body,{usuarioFolderId})
 
+    }
+    async actualizaLogoFolderId(usuarioId:string,logoFolderId:string){
+      const body:AuthEntity={
+        usuarioId:usuarioId,
+        email:"",
+        password:"string",
+        usuarioFolderId:"",
+        logoFolderId
+      }
+      return await this.authRepository.actualizaLogoFolderId(body,{logoFolderId})
+    
     }
     
     

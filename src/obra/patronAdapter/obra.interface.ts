@@ -1,5 +1,5 @@
 import { FilterQuery, UpdateQuery } from "mongoose"
-import { ActualizaFolderId, ActualizaFolderIdV1, CreaObraDto, listaObrasPorUsuarioIdDto } from "../dtos/crud.obra"
+import { ActualizaFolderId, ActualizaFolderIdV1, ActualizaLogoFolderId, CreaObraDto, listaObrasPorUsuarioIdDto } from "../dtos/crud.obra"
 import { ObraEntity } from "../entities/obra.entity"
 //atencion con las proyeccciones elimino la parte sucia
 export const  IOBRA_REPOSITORY = 'IObraRepository'
@@ -34,5 +34,7 @@ export interface IObraRepository{
     actualizaFolderId(entityFilterQuery: FilterQuery<ActualizaFolderIdV1>,
         projection?: Record<string, unknown>):Promise<ActualizaFolderIdV1>
     
+    actualizaLogoFolderId(entityFilterQuery: FilterQuery<ActualizaLogoFolderId>,
+        projection?: Record<string, unknown>):Promise<ActualizaLogoFolderId>
     
 }

@@ -2,13 +2,12 @@ import { Validate } from "class-validator";
 import { isUnique } from "src/constraints/fieldUnique";
 import { EvidenciaFotografica, Periodo } from "../entities/valorizacion.entity";
 
-interface IOb{
-    code:string
-}
+
 export class CreateValorizacionDto{
     
-    obraId:IOb;
+    obraId:string;
     periodos:Periodo[];
+    valorizacionFolderId:string;
 }
 export class ActualizaValorizacionDto{
     periodos:Periodo[]
@@ -29,5 +28,12 @@ export class EvidenciaFotograficaDTO  {
     descripcionTrabajos:string;
     urlFoto:string;
 }
+
+export class ActualizaValorizacionFolderIdDTO{
+    obraId:string;
+    valorizacionFolderId:string
+
+}
+
 
 

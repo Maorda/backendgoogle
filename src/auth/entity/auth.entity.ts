@@ -3,6 +3,7 @@ export class AuthEntity{
     email:string;
     password:string;
     usuarioFolderId:string
+    logoFolderId:string
  
 }
 export class AuthFindOne{

@@ -21,5 +21,8 @@ export interface IAuthRepository{
         entityFilterQuery:FilterQuery<AuthEntity>,
         entity: Partial<AuthEntity>
         ):Promise<AuthEntity>
-    
+    actualizaLogoFolderId(
+        entityFilterQuery:FilterQuery<AuthEntity>,
+        entity: Partial<AuthEntity>
+        ):Promise<AuthEntity>
 }

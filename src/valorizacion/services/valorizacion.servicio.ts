@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateValorizacionDto, ActualizaValorizacionDto, AgregaevidenciafotograficaDto } from '../dtos/crud.valorizacion.dto';
+import { CreateValorizacionDto, ActualizaValorizacionDto, AgregaevidenciafotograficaDto, ActualizaValorizacionFolderIdDTO } from '../dtos/crud.valorizacion.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ValorizacionEntity } from '../entities/valorizacion.entity';
 import { IVALORIZACION_REPOSITORY, IValorizacionRepository } from '../patronAdapter/valorizacion.interface';
@@ -42,6 +42,11 @@ export class ValorizacionService {
         return await this.ivalorizacionRepository.actualizaValorizacion({obraId},actualizaObraDto)
     }
 
+    async actualizaValorizacionFolderId(actualizaValorizacionFolderIdDTO: ActualizaValorizacionFolderIdDTO){
+        
+        return await this.ivalorizacionRepository.actualizaValorizacionFolderId(actualizaValorizacionFolderIdDTO)
+    }
+
     async listaValorizaciones(){
         return await this.ivalorizacionRepository.listaValorizaciones({})
     }
@@ -58,13 +63,17 @@ export class ValorizacionService {
         
         return macho
     }
+    async showPicture(fileId:string){
+        const fileid= "1llt9PCpU6Wlm97Y9GyIS1QpxOPPBuRtg"
+        return await this.googleDriveService.obtenerwebViewLink(fileid)
+    }
     async buscaObraById(obraId:string){
         const  entityFilterQuery: FilterQuery<ObraEntity> = {
-            obraId:obraId,
+            obraId
             
         }
 
-        return await this.iobraRepository.buscaObraByObraId(entityFilterQuery.obraId)
+        return await this.iobraRepository.buscaObraByObraId(entityFilterQuery)
     }
 
     async validateToken(token:string):Promise<string>{
@@ -75,6 +84,9 @@ export class ValorizacionService {
     
     async dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId:string,mesSeleccionado:string){
         return await this.ivalorizacionRepository.dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId,mesSeleccionado)
+    }
+    async buscaMesSeleccionadoFolderIdPorMesSeleccionado(obraId:string,mesSeleccionado:string){
+        return await this.ivalorizacionRepository.buscaMesSeleccionadoFolderIdPorMesSeleccionado(obraId,mesSeleccionado)
     }
     async actualizaEvidenciaFotografica(evidenciaFotografica:AgregaevidenciafotograficaDto){
         return await this.ivalorizacionRepository.actualizaEvidenciaFotografica(evidenciaFotografica)
