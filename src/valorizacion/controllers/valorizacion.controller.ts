@@ -15,6 +15,7 @@ import { TokenInterceptor } from '../services/intersepta_Token';
 import { PictureInterceptor } from '../services/pictureInterceptor';
 import { generateRouterForValorizacion } from 'src/toolbox/forValorizacion/generaSeparadores';
 import { Console } from 'console';
+import { HttpService } from '@nestjs/axios';
 //import { generaIndice } from 'src/toolbox/generaIndicePDF';
 //import { generateFoldersInFolderProjects, ISeparador } from 'src/toolbox/generaCarpetas';
 //import { compressIntereFolder } from 'src/toolbox/forValorizacion/comprimeCarpeta';
@@ -27,6 +28,7 @@ export class ValorizacionController {
     constructor(
         private valorizacionService:ValorizacionService,
         private jwtService: JwtService,
+        private readonly httpService:HttpService
     ){
 
     }
@@ -125,6 +127,18 @@ export class ValorizacionController {
      res.send(`https://drive.google.com/uc?export=view&id=${fileId}`)
      //https://drive.google.com/uc?export=view&id=1llt9PCpU6Wlm97Y9GyIS1QpxOPPBuRtg
     
+    }
+    @Get('listaFotos')
+    listaFotosSegunObraMesSeleccionado(
+        @Body() fotosPorValoSegunObra:any,
+        
+    ){
+        const {obraId,mesSeleccionado} = fotosPorValoSegunObra
+        return this.valorizacionService.listaFotosSegunObraMesSeleccionado(obraId,mesSeleccionado)
+    }
+    @Post('creadocumentopanelfotografico')
+    async creaDocumentoPanelFotografico(){
+        return await this.valorizacionService.plantillaDocxV3()
     }
     /**
      * actualiza evidencia fotografica

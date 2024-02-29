@@ -59,10 +59,7 @@ export class AppController {
 
   }
   @Post('docxv2')
-  async docxv2(){
-        
-        
-        
+  async docxv2(){    
         //para generar el documento en word del panel fotografico se necesita de los siguientes parametros
         //- idusuario
         //- idobra
@@ -78,10 +75,14 @@ export class AppController {
        }
 
         return await this.appService.plantillaDocxV2(config,'15FXCr7FAAA_bz_-LaIFtPx-dIVnVmFqq')
+  }
+  @Post()
+  async docxv3(){
+    return await this.appService.plantillaDocxV3()
 
-        
 
   }
+
   @Get('descargazip')
   descargazip(@Res({ passthrough: true }) response: Response){
     return this.appService.comprimeDescargaCarpeta('1aT_8H66m-3yQWeCwfEKNvRHRB_6WAEWy')

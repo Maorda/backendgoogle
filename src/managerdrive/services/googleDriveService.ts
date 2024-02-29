@@ -7,6 +7,7 @@ import * as path from 'path'
 import { GoogleAutenticarService } from './googleAntenticarService';
 import * as mime from 'mime-types'
 import { ObraController } from 'src/obra/controller/obra.controller';
+import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class GoogleDriveService extends GoogleAutenticarService {
 
@@ -204,6 +205,17 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
     } catch (err) {
       console.log('Failed to export PDF', err);
     }
+  }
+  public descargaImagenArrayBuffer(file_id:string){
+    var service = this.drive
+    
+    return service.files.get(
+      { fileId:file_id, alt: 'media' },
+      { responseType: 'arraybuffer' }
+    ) 
+    
+
+    
   }
   
     

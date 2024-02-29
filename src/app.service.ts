@@ -86,7 +86,7 @@ export class AppService {
     }
   }
   public async plantillaDocx(documentId,data:any){
-    try {
+    /*try {
       
       firstValueFrom(
         this.httpService.get(`https://drive.google.com/uc?export=download&id=${documentId}`,{responseType:'arraybuffer'})
@@ -107,12 +107,12 @@ export class AppService {
     } catch (error) {
      console.error(error)
       
-    }
+    }*/
    
     
   }
   public async plantillaDocxV2(config:{idusuario:number,idobra:number,nrovalorizacion:number,mesvalorizacion:string},documentId:string){
-    try {
+    /*try {
       //axios.get, siempre devuelve una respuesta con data.
       const { data:{"results": [user]}} = await firstValueFrom(this.httpService.get('https://randomuser.me/api'));//obtiene los datos de tipo string
       const {data: userAvatarBuffer} = await firstValueFrom(this.httpService.get(user.picture.large, {responseType: 'arraybuffer'}));//combierte de string a buffer
@@ -137,24 +137,18 @@ export class AppService {
        
     } catch (error) {
       
-    }
+    }*/
 
   }
-  public async plantillaDocxV3(config:{idusuario:number,idobra:number,nrovalorizacion:number,mesvalorizacion:string},documentId:string){
-    try {
+  public async plantillaDocxV3(){
+    /*try {
       //axios.get, siempre devuelve una respuesta con data.
       const { data:{"results": [user]}} = await firstValueFrom(this.httpService.get('https://randomuser.me/api'));//obtiene los datos de tipo string
+      
+      
       const { data: userAvatarBuffer} = await firstValueFrom(this.httpService.get(user.picture.large, {responseType: 'arraybuffer'}));//combierte la url de tipo string a buffer
-      const datas:Array<string> = [
-        "https://drive.google.com/uc?export=download&id=1uHd3KLvqig4XzkiGCkdO7WoO58BF_wXb",
-        "https://drive.google.com/uc?export=download&id=1B9jLEVu2bEdbYfS3hN9otUPNSfkanqNc",
-        "https://drive.google.com/uc?export=download&id=1dYYCySScMlhh9Gz3-IFL9IVXEnYR5q1Q",
-        "https://drive.google.com/uc?export=download&id=1PrTGdPXYsjjAO-ENmC-8G9iMpVPo2wDm"
-      ]
       
-      
-      
-      firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=${documentId}`,{responseType:'arraybuffer'}))//copia la plantilla
+      firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=15FXCr7FAAA_bz_-LaIFtPx-dIVnVmFqq`,{responseType:'arraybuffer'}))//copia la plantilla
       .then(async (arrayBuffer)=>{
         user.avatar = {
           data: userAvatarBuffer,
@@ -175,7 +169,7 @@ export class AppService {
        
     } catch (error) {
       
-    }
+    }*/
 
   }
   public async comprimeDescargaCarpeta(idForGoogleElement:string){

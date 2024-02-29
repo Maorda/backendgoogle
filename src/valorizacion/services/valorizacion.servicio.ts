@@ -8,11 +8,16 @@ import { HttpService } from "@nestjs/axios";
 import * as fs from 'fs'
 import  * as path from 'path';
 
+import createReport from 'docx-templates';
+
+
 import { map, tap } from 'rxjs/operators';
 import { GoogleDriveService } from 'src/managerdrive/services/googleDriveService';
 import { IObraRepository, IOBRA_REPOSITORY } from 'src/obra/patronAdapter/obra.interface';
 import { FilterQuery } from 'mongoose';
 import { ObraEntity } from 'src/obra/entities/obra.entity';
+import { firstValueFrom } from 'rxjs';
+import { GoogleDocService } from 'src/managerdrive/services/googleDocService';
 //import { ITitulo_subtitulo } from 'src/toolbox/forValorizacion/generaSeparadores';
 
 @Injectable()
@@ -23,6 +28,8 @@ export class ValorizacionService {
         private jwtService: JwtService,
         private http:HttpService,
         private readonly googleDriveService: GoogleDriveService,
+        protected readonly googleDocService:GoogleDocService,
+        private readonly httpService : HttpService
 
     ){}
 
@@ -120,6 +127,121 @@ export class ValorizacionService {
         );
     
     }
+    async listaFotosSegunObraMesSeleccionado(obraId:string,mesSeleccionado:string){
+        return await this.ivalorizacionRepository.listaFotosSegunObraMesSeleccionado(obraId,mesSeleccionado) 
+
+    }
+    public returnresponsetypeservice(){
+        return  this.httpService.get('http://localhost:3000/valorizacion/creadocumentopanelfotografico',{responseType:'arraybuffer'})
+
+    }
+    public async plantillaDocxV3(){
+        const valores:any[] = []
+        let payload:any
+        let carpetaContenedoraId:string
+        let iterable:any[] = []
+        let funcs:any[] = []
+        try {
+          //axios.get, siempre devuelve una respuesta con data.
+          this.buscaMesSeleccionadoFolderIdPorMesSeleccionado('65d91ea6cc44ee97bd625b0d','Diciembre')//obtiene los datos de tipo string
+          .then((data)=>{
+            carpetaContenedoraId = data.periodos[0].mesSeleccionadoFolderId;
+            data.periodos[0].panelFotografico
+            .map(async (evidenciaFotografica:any,index:number)=>
+                {
+                    let myid = evidenciaFotografica.urlFoto.split('&id=',2)[1];
+                    //payload = await this.googleDriveService.descargaImagenArrayBuffer(myid)
+                
+                 this.googleDriveService.descargaImagenArrayBuffer(myid).then((val)=>{
+
+                 }) 
+               
+
+            
+                  
+                
+            
+                  
+                  /*valores.push({
+                        nro: `Fotografía N° ${index + 1}`,
+                        partida:"imagename.partida",
+                        descripcion:"imagename.descripcion",
+                        foto:{
+                            data:payload.data,
+                            extension:".jpeg",
+                            height:9,
+                            width:9
+                        }
+                    })*/
+                }
+                
+
+
+            )
+            
+            const serial = funcs => funcs
+        .reduce((promise, func) => promise
+        .then(result => func()
+        .then(Array.prototype
+            .concat
+            .bind(result))), Promise
+            .resolve([])
+        )
+        serial(funcs).then(async(val:any[])=>{
+            console.log(val)
+        })
+        
+
+          })
+          
+         
+           
+            
+                    
+                 /*    firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=1vS6zPLqOmjdv3Ep6HyXF4sB25_DshhHz`,{responseType:'arraybuffer'}))//copia la plantilla
+          .then(async (arrayBuffer)=>{
+            
+            let template = Buffer.from(arrayBuffer.data,'binary')
+            
+            const buffer1 = await createReport({//reemplaza los valores segun plantilla
+              template,
+              data:{valores}
+            });
+    
+            this.googleDocService.creaDocumento(buffer1,"panel fotografico",carpetaContenedoraId)//crea un nuevo archivo en google, con la plantilla reemplazada
+    
+          })*/
+
+         
+            
+          
+           
+                
+                
+          //console.log({"iterable":iterable})
+          
+          
+          //const { data: valorizacionPanelFotograficoBuffer} = await firstValueFrom(this.httpService.get(user.picture.large, {responseType: 'arraybuffer'}));//combierte la url de tipo string a buffer
+          //
+          /*firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=1vS6zPLqOmjdv3Ep6HyXF4sB25_DshhHz`,{responseType:'arraybuffer'}))//copia la plantilla
+          .then(async (arrayBuffer)=>{
+            
+            let template = Buffer.from(arrayBuffer.data,'binary')
+            
+            const buffer1 = await createReport({//reemplaza los valores segun plantilla
+              template,
+              data:{valores}
+            });
+    
+            this.googleDocService.creaDocumento(buffer1,"panel fotografico",carpetaContenedoraId)//crea un nuevo archivo en google, con la plantilla reemplazada
+    
+          })*/
+           
+        } catch (error) {
+          
+        }
+    
+      }
   
 
 }

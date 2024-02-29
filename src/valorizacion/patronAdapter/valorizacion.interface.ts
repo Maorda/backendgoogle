@@ -44,6 +44,8 @@ export interface IValorizacionRepository{
 //consultas
 dadoUnMesSeleccionadoMostarSuPanelFotografico(obraId:string,mesSeleccionado:string):Promise<any>
 buscaMesSeleccionadoFolderIdPorMesSeleccionado(obraId:string,mesSeleccionado:string):Promise<any>
+listaFotosSegunObraMesSeleccionado(obraId:string,mesSeleccionado:string):Promise<any>
+
 
 
 }

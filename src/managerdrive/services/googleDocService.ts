@@ -171,10 +171,10 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
     }
 
     
-    public async creaDocumento(content1:Uint8Array){
+    public async creaDocumento(content1:Uint8Array,nombreArhivoDocx:string,carpetaContenedoraId:string){
       
-      var filename = "sample filename";  // Please set the filename of created Google Document.
-      var rootFolderId = "1B3aTsga8DljMwFO-d5djpi4E-S5h_8os";  // Please set the folder ID.
+      var filename = nombreArhivoDocx;  // Please set the filename of created Google Document.
+      var rootFolderId = carpetaContenedoraId;  // Please set the folder ID.
       var bufferStream = new stream.PassThrough();
           bufferStream.end(Uint8Array.from(content1));
       var fileMetadata = {

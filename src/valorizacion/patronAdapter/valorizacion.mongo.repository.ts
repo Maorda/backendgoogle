@@ -140,6 +140,7 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
             
             return macho
     }
+    
 
     
     async listavalorizacionObraId(obraId:string):Promise<any>{
@@ -195,6 +196,29 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
                 }
                
             )
+    }
+    async listaFotosSegunObraMesSeleccionado(obraId:string,mesSeleccionado:string){
+        console.log(mesSeleccionado)
+        return await this.valorizacionModel
+        .find(
+            {"obraId":obraId,$and :[{
+                periodos:{
+                    $elemMatch:
+                    {
+                        "mesSeleccionado":mesSeleccionado
+                    }
+                }
+            }]
+            },
+            
+            {
+                periodos:{$elemMatch:{"mesSeleccionado":mesSeleccionado}},
+                
+            }
+            
+            
+           
+        )
     }
 
     //consultas
