@@ -209,13 +209,10 @@ public async crearCarpeta(idForGoogleElement:string,nameForGoogleElement:string)
   public descargaImagenArrayBuffer(file_id:string){
     var service = this.drive
     
-    return service.files.get(
-      { fileId:file_id, alt: 'media' },
-      { responseType: 'arraybuffer' }
-    ) 
-    
-
-    
+        
+             return service.files.get({fileId: file_id, alt: 'media'}, { responseType: "arraybuffer" })
+     
+          
   }
   
     

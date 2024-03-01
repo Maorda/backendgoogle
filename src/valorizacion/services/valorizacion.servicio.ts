@@ -141,58 +141,76 @@ export class ValorizacionService {
         let carpetaContenedoraId:string
         let iterable:any[] = []
         let funcs:any[] = []
+        let joder:any
+        let evidenciasFotograficasId:any[]=[]
         try {
-          //axios.get, siempre devuelve una respuesta con data.
-          this.buscaMesSeleccionadoFolderIdPorMesSeleccionado('65d91ea6cc44ee97bd625b0d','Diciembre')//obtiene los datos de tipo string
-          .then((data)=>{
-            carpetaContenedoraId = data.periodos[0].mesSeleccionadoFolderId;
-            data.periodos[0].panelFotografico
-            .map(async (evidenciaFotografica:any,index:number)=>
-                {
-                    let myid = evidenciaFotografica.urlFoto.split('&id=',2)[1];
-                    //payload = await this.googleDriveService.descargaImagenArrayBuffer(myid)
-                
-                 this.googleDriveService.descargaImagenArrayBuffer(myid).then((val)=>{
+          
+            payload = await this.buscaMesSeleccionadoFolderIdPorMesSeleccionado('65d91ea6cc44ee97bd625b0d','Diciembre')
+            carpetaContenedoraId = payload.periodos[0].mesSeleccionadoFolderId;
+            evidenciasFotograficasId = payload.periodos[0].panelFotografico.map((evidenciaFotografica:any,index:number)=>
+                    {
+                        return evidenciaFotografica.urlFoto.split('&id=',2)[1];
+                    })
+         
 
-                 }) 
-               
+            const funcs = evidenciasFotograficasId.map(url => () => this.googleDriveService.descargaImagenArrayBuffer(url))
+            /*
+            * serial executes Promises sequentially.
+            * @param {funcs} An array of funcs that return promises.
+            * @example
+            * const urls = ['/url1', '/url2', '/url3']
+            * serial(urls.map(url => () => $.ajax(url)))
+            *     .then(console.log.bind(console))
+            */
+            const serial = funcs =>
+            funcs.reduce((promise, func) =>
+            promise.then(result => func().then(Array.prototype.concat.bind(result))), Promise.resolve([]))
 
-            
-                  
+            serial(funcs)
+            .then(async(val:any[])=>{
                 
-            
-                  
-                  /*valores.push({
+                val.map((myval,index)=>{
+                    valores.push({
                         nro: `Fotografía N° ${index + 1}`,
                         partida:"imagename.partida",
                         descripcion:"imagename.descripcion",
                         foto:{
-                            data:payload.data,
+                            data:myval.data,
                             extension:".jpeg",
                             height:9,
                             width:9
                         }
-                    })*/
-                }
-                
-
-
-            )
+                    })
+                })
+                console.log(valores)
+           firstValueFrom(this.httpService.get(`https://drive.google.com/uc?export=download&id=1vS6zPLqOmjdv3Ep6HyXF4sB25_DshhHz`,{responseType:'arraybuffer'}))//copia la plantilla
+          .then(async (arrayBuffer)=>{
             
-            const serial = funcs => funcs
-        .reduce((promise, func) => promise
-        .then(result => func()
-        .then(Array.prototype
-            .concat
-            .bind(result))), Promise
-            .resolve([])
-        )
-        serial(funcs).then(async(val:any[])=>{
-            console.log(val)
-        })
+            let template = Buffer.from(arrayBuffer.data,'binary')
+            
+            const buffer1 = await createReport({//reemplaza los valores segun plantilla
+              template,
+              data:{valores}
+            });
+    
+            this.googleDocService.creaDocumento(buffer1,"panel fotografico",carpetaContenedoraId)//crea un nuevo archivo en google, con la plantilla reemplazada
+    
+          })
+
+
+            })
+            
+
+            
+            
+            
+            
+           
+           
+            
         
 
-          })
+            
           
          
            
@@ -242,7 +260,44 @@ export class ValorizacionService {
         }
     
       }
+      
   
 
 }
+function getInSequence(array, asyncFunc) {
+    return array.reduce((previous, current) => (
+      previous.then(accumulator => (
+        asyncFunc(current).then(result => accumulator.concat(result))
+      ))
+    ), Promise.resolve([]));
+  }
+function asyncFunc(e) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => resolve(e), e * 1000);
+    });
+  }
+let final = [];
 
+function workMyCollection(arr) {
+    return arr.reduce((promise, item) => {
+      return promise
+        .then((result) => {
+          // help you to understand what's result
+          console.log(`A: result ${result}, item ${item}`)
+          return asyncFunc(item).then(result => {
+            final.push(result)
+            // print result and item
+            console.log(`B: result ${result}, item ${item}`)
+            // add a new return value
+            return result + " Done"
+          })
+        })
+        .catch(console.error)
+    }, Promise.resolve())
+  }
+
+  function promiseMap(inputValues, mapper) {
+    const reducer = (acc$, inputValue) =>
+      acc$.then(acc => mapper(inputValue).then(result => acc.push(result) && acc));
+    return inputValues.reduce(reducer, Promise.resolve([]));
+  }
