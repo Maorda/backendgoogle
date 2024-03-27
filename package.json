@@ -34,6 +34,7 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "docx": "^8.5.0",
     "docx-templates": "^4.11.4",
     "express-session": "^1.18.0",
     "googleapis": "^131.0.0",

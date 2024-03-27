@@ -127,7 +127,7 @@ export class ValorizacionMongoRepository implements IValorizacionRepository{
                     $push:{
                         "periodos.$[periodo].panelFotografico":{
                             $each:[nuevaEvidenciaFotografica],
-                            $position:0
+                           // $position:0
 
                         }
                         

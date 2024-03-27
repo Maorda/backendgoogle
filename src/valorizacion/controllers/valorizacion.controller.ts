@@ -140,6 +140,12 @@ export class ValorizacionController {
     async creaDocumentoPanelFotografico(){
         return await this.valorizacionService.plantillaDocxV3()
     }
+    @Post('creadocumentoinformeresidente')
+    async creaDocumentoinformeresidente(){
+        await this.valorizacionService.informeresidente('')
+        //await this.valorizacionService.cabecera()
+    }
+
     /**
      * actualiza evidencia fotografica
      */

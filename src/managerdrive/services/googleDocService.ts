@@ -169,6 +169,20 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
             console.log(err);
           }
     }
+    public async eliminaDocumentoCarpeta(googleFileId:string){
+      const file = await this.drive.files.delete({
+        fileId: googleFileId,
+    },
+    function (err, file) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(file.data.id);
+      return "eliminado correctamente"
+    })
+    
+    }
 
     
     public async creaDocumento(content1:Uint8Array,nombreArhivoDocx:string,carpetaContenedoraId:string){
@@ -186,10 +200,11 @@ export class GoogleDocService extends GoogleAutenticarService { //es el cliente 
           mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",//"text/plain",  // <--- Added
           body: bufferStream
           } ;
-      this.drive.files.create({
+      const file = await this.drive.files.create({
           resource: fileMetadata,
           media
       })
+      return file.data.id
 
     /*  this.drive.files.export(
         {
